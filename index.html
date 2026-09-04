@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15171B">
+<title>Treinos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15171B; --surface:#1C1F24; --line:#2C313A;
+    --text:#E9E6DF; --muted:#8A9099;
+    --brass:#D2A63C; --rust:#C2603F; --radius:4px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;
+    padding-bottom:48px;
+  }
+  h1,h2,h3,b{font-family:"Archivo",system-ui,sans-serif}
+  [hidden]{display:none !important}
+
+  header{
+    position:sticky;top:0;z-index:10;background:var(--bg);
+    border-bottom:1px solid var(--line);padding:env(safe-area-inset-top) 0 0;
+  }
+  .brand{display:flex;align-items:center;gap:12px;padding:14px 16px 10px}
+  .brand h1{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0;flex:1}
+  .brand .tag{color:var(--muted);font-size:13px}
+  .back{
+    background:transparent;border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:14px;padding:6px 11px;cursor:pointer;
+  }
+  .back:focus-visible,.day:focus-visible,.set:focus-visible,.btn:focus-visible,.plano:focus-visible{
+    outline:2px solid var(--brass);outline-offset:2px;
+  }
+
+  .rail{display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .day{
+    flex:1 0 auto;min-width:62px;background:var(--surface);
+    border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--muted);padding:8px 6px 7px;font:inherit;text-align:center;cursor:pointer;
+  }
+  .day b{display:block;font-size:19px;font-weight:800;color:var(--text)}
+  .day small{font-size:11px;letter-spacing:.04em}
+  .day[aria-selected="true"]{background:var(--brass);border-color:var(--brass);color:#2A2205}
+  .day[aria-selected="true"] b{color:#221B04}
+
+  main{padding:0 16px}
+  .intro{color:var(--muted);font-size:14px;margin:18px 0 6px}
+
+  .plano{
+    display:block;width:100%;text-align:left;cursor:pointer;
+    background:transparent;border:0;border-bottom:1px solid var(--line);
+    border-left:3px solid var(--brass);
+    padding:18px 0 18px 14px;margin:0;font:inherit;color:var(--text);
+  }
+  .plano h2{font-size:19px;font-weight:600;margin:0}
+  .plano p{margin:5px 0 0;color:var(--muted);font-size:14px}
+
+  .today-note{color:var(--muted);font-size:13px;padding:12px 0 0;margin:0}
+  .ex{border-bottom:1px solid var(--line);padding:20px 0 18px}
+  .ex-head{display:flex;gap:12px;align-items:flex-start}
+  .idx{
+    flex:0 0 26px;height:26px;margin-top:2px;display:grid;place-items:center;
+    border:1px solid var(--brass);color:var(--brass);
+    font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;border-radius:var(--radius);
+  }
+  .ex h3{font-size:18px;font-weight:600;line-height:1.25;margin:0}
+  .tech{opacity:.75;font-size:14px;margin:6px 0 0}
+  .rest{color:var(--brass);font-size:13px;margin:4px 0 0}
+
+  .sets{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0 38px}
+  .set{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:13px;padding:7px 10px;cursor:pointer;
+  }
+  .set[aria-pressed="true"]{
+    background:transparent;border-color:var(--brass);color:var(--brass);
+    text-decoration:line-through;text-decoration-color:var(--brass);
+  }
+
+  .actions{display:flex;gap:6px;margin:12px 0 0 38px;flex-wrap:wrap}
+  .btn{
+    background:transparent;border:1px solid var(--line);border-radius:var(--radius);
+    color:var(--text);font:inherit;font-size:13px;padding:8px 11px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;text-decoration:none;
+  }
+  .btn.swap{border-color:var(--rust);color:var(--rust)}
+  .btn.swap[aria-expanded="true"]{background:var(--rust);color:#1A0D09}
+  .btn svg{width:15px;height:15px;flex:0 0 auto}
+
+  .subs{margin:10px 0 0 38px;padding:12px 14px;background:var(--surface);border-left:2px solid var(--rust)}
+  .subs p{margin:0 0 8px;font-size:12px;color:var(--muted)}
+  .subs ul{margin:0;padding-left:18px}
+  .subs li{margin:0 0 5px;font-size:14px}
+  .subs li:last-child{margin:0}
+
+  footer{padding:24px 16px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <button class="back" id="voltar" type="button" hidden>Voltar</button>
+    <h1 id="titulo">Treinos</h1>
+    <span class="tag" id="tag"></span>
+  </div>
+  <div class="rail" role="tablist" aria-label="Dias de treino" id="rail" hidden></div>
+</header>
+
+<main>
+  <p class="today-note" id="note" hidden></p>
+  <div id="conteudo"></div>
+</main>
+
+<footer id="rodape">Escolha a planilha que você vai usar.</footer>
+
+<script>
+const IG = "https://www.instagram.com/explore/search/keyword/?q=";
+const YT = "https://www.youtube.com/results?search_query=";
+
+/* substituições reaproveitadas entre planilhas */
+const S = {
+  panturrilhaPe:["Panturrilha no leg press","Panturrilha em pé unilateral com halter","Panturrilha no step com barra nas costas"],
+  panturrilhaSent:["Panturrilha no leg press com joelho flexionado","Panturrilha sentada com anilha sobre o joelho"],
+  supInc:["Supino inclinado com barra livre","Supino inclinado com halteres","Supino inclinado na máquina"],
+  supReto:["Supino reto com barra","Supino reto na máquina","Supino reto no smith"],
+  supDecl:["Paralelas com tronco inclinado à frente","Crossover de cima para baixo","Supino declinado na máquina"],
+  voador:["Crossover na polia média","Crucifixo reto com halteres","Peck deck"],
+  frontal:["Elevação frontal com halteres","Elevação frontal com anilha","Elevação frontal com barra"],
+  lateral:["Elevação lateral no cabo","Elevação lateral na máquina","Elevação lateral apoiado no banco inclinado"],
+  desenv:["Desenvolvimento no smith","Desenvolvimento na máquina","Desenvolvimento militar com barra"],
+  supra:["Crunch na polia alta ajoelhado","Abdominal na máquina","Abdominal na bola suíça"],
+  infra:["Elevação de pernas suspenso na barra fixa","Infra no banco declinado","Reverse crunch no solo"],
+  remCurv:["Remada curvada com halteres pronada","Remada cavalinho","Remada na máquina pegada pronada"],
+  remBaixaAberta:["Remada na máquina pegada aberta","Remada baixa com barra reta","Remada sentada com corda"],
+  remTriangulo:["Remada na máquina pegada neutra","Remada baixa com barra reta","Remada curvada com halteres"],
+  serrote:["Remada unilateral na máquina","Remada unilateral na polia baixa","Remada unilateral no smith"],
+  pulleyAberto:["Barra fixa pegada aberta (assistida se precisar)","Pulldown na máquina","Pulley com barra romana"],
+  pulleyTri:["Barra fixa pegada neutra fechada","Pulldown com triângulo na máquina","Remada alta com triângulo na polia"],
+  crucInv:["Crucifixo invertido no cross","Face pull na polia","Crucifixo invertido com halteres no banco inclinado"],
+  terra:["Levantamento terra romeno","Terra na barra hexagonal","Stiff com halteres"],
+  stiff:["Terra romeno com barra","Stiff com halteres","Mesa flexora"],
+  lombar:["Extensão lombar na máquina","Good morning com carga leve","Superman no solo"],
+  agacho:["Agachamento no smith","Hack machine","Agachamento búlgaro com halteres"],
+  hack:["Agachamento no smith","Leg press 45 com pés altos","Agachamento livre"],
+  leg45:["Leg press horizontal","Hack machine","Agachamento no smith com pés à frente"],
+  extensor:["Extensora unilateral","Leg press com pés baixos e juntos","Agachamento sissy"],
+  flexorDeit:["Flexor deitado unilateral","Flexor sentado","Nórdico assistido"],
+  flexorSent:["Flexor deitado","Flexor unilateral em pé","Stiff com halteres"],
+  quadril:["Hip thrust no banco com barra","Elevação de quadril na máquina","Coice na polia baixa"],
+  abdutor:["Abdução na polia com caneleira","Abdução com miniband","Abdução deitado de lado"],
+  adutor:["Adução com anilha entre os joelhos","Adução na polia com caneleira","Adução com miniband"],
+  adAbd:["Abdução na polia com caneleira + adução com anilha","Abdução com miniband + adução no cross"],
+  roscaBarra:["Rosca direta com barra W","Rosca na polia baixa com barra","Rosca simultânea com halteres"],
+  roscaScott:["Rosca scott com barra W","Rosca concentrada","Rosca no banco inclinado"],
+  roscaBanco:["Rosca alternada em pé","Rosca concentrada","Rosca inclinada na polia"],
+  roscaMartelo:["Rosca martelo com halteres","Rosca inversa com barra","Rosca cross-body com halteres"],
+  tricepsTesta:["Tríceps testa com barra W","Tríceps testa com halteres","Tríceps francês com halter"],
+  tricepsCorda:["Tríceps na barra reta na polia","Tríceps na máquina","Coice na polia"],
+  tricepsFrances:["Tríceps francês com halter","Tríceps testa deitado com barra W","Extensão acima da cabeça na polia"]
+};
+
+const PLANOS = {
+  cinco:{
+    nome:"Avançado 5x na semana",
+    resumo:"Treinos A a E, foco em peito e ombros",
+    semana:{1:"A",2:"B",3:"C",5:"D",6:"E"},
+    treinos:{
+      A:{dia:"SEG",ex:[
+        {n:"Panturrilha em pé na máquina ou smith com step",t:"Progressão de carga e drop",i:"1 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.panturrilhaPe},
+        {n:"Panturrilha sentada",t:"Pico de contração de 2s e rest pause",i:"1 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause"],alt:S.panturrilhaSent},
+        {n:"Supino inclinado smith ou máquina",t:"Progressão de carga e strip set com mudança de velocidade de contração",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10 + strip set"],alt:S.supInc},
+        {n:"Supino reto halteres",t:"Progressão de carga e drop",i:"1 a 2 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.supReto},
+        {n:"Supino inclinado com halteres + crucifixo inclinado com halteres",t:"Bi-set",i:"60 s",s:["3x 8-12"],alt:["Supino inclinado no smith + voador","Supino inclinado na máquina + crucifixo no cross"]},
+        {n:"Supino declinado",t:"—",i:"45 s",s:["3x 8-12"],alt:S.supDecl},
+        {n:"Voador",t:"FST 7",i:"45 s",s:["7x 10-15"],alt:S.voador},
+        {n:"Elevação frontal sentado com halteres",t:"Progressão de carga e drop",i:"1 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.frontal},
+        {n:"Elevação lateral",t:"Repetições parciais após a falha",i:"45 s",s:["3x 8-12"],alt:S.lateral}
+      ]},
+      B:{dia:"TER",ex:[
+        {n:"Abdominal supra na prancha",t:"—",i:"45 s",s:["3x RM"],alt:S.supra},
+        {n:"Abdominal infra na torre",t:"—",i:"45 s",s:["3x RM"],alt:S.infra},
+        {n:"Remada curvada pronada",t:"Progressão de carga",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"],alt:S.remCurv},
+        {n:"Remada baixa pegada aberta",t:"Progressão de carga e pico de contração de 2s",i:"2 a 3 min",s:["1x 10-15","1x 8-12","1x 6-10"],alt:S.remBaixaAberta},
+        {n:"Serrote",t:"Pico de contração de 2s",i:"—",s:["3x 8-12"],alt:S.serrote},
+        {n:"Pulley frente aberto",t:"Progressão de carga, pico de contração de 2s e drop",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.pulleyAberto},
+        {n:"Pulley frente supinado",t:"Pico de contração de 2s",i:"45 s",s:["3x 8-12"],alt:["Barra fixa supinada","Remada supinada na polia alta","Pulldown supinado na máquina"]},
+        {n:"Crucifixo invertido",t:"Pico de contração de 2s",i:"45 s",s:["3x 8-12"],alt:S.crucInv},
+        {n:"Meio Terra",t:"Progressão de carga",i:"2 a 3 min",s:["1x 10-15","1x 8-12","2x 6-10"],alt:S.terra},
+        {n:"Lombar no banco romano",t:"—",i:"45 s",s:["3x 8-12"],alt:S.lombar}
+      ]},
+      C:{dia:"QUA",ex:[
+        {n:"Agachamento Livre",t:"Progressão de carga",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"],alt:S.agacho},
+        {n:"Leg 45°",t:"10 repetições parciais após a falha",i:"90 s",s:["4x 8-12"],alt:S.leg45},
+        {n:"Cadeira Extensora",t:"Pico de contração de 2s",i:"30 s / 90 s",s:["2x 15-20 (int. 30s)","2x 8-12 (int. 90s)","1x 6-10 + 3 drops"],alt:S.extensor},
+        {n:"Flexor deitado",t:"Progressão de carga e rest pause",i:"1 a 2 min",s:["1x 15-20","1x 10-15","1x 8-12","2x 6-10 + 2 rest pause"],alt:S.flexorDeit},
+        {n:"Flexor sentado",t:"—",i:"45 s",s:["5x 10-15"],alt:S.flexorSent},
+        {n:"Elevação de quadril",t:"Pico de contração de 2s",i:"60 s",s:["5x 10-15"],alt:S.quadril},
+        {n:"Adutor + abdutor",t:"Bi-set e pico de contração de 2s",i:"45 s",s:["5x 10-15"],alt:S.adAbd}
+      ]},
+      D:{dia:"SEX",ex:[
+        {n:"Panturrilha em pé na máquina ou smith com step",t:"Progressão de carga e drop",i:"1 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.panturrilhaPe},
+        {n:"Panturrilha sentada",t:"Pico de contração de 2s e rest pause",i:"1 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause"],alt:S.panturrilhaSent},
+        {n:"Desenvolvimento sentado com halteres",t:"Progressão de carga e drop",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.desenv},
+        {n:"Elevação frontal corda",t:"Progressão de carga e drop",i:"1 min",s:["1x 15-20","1x 8-12","1x 6-10 + 2 drop"],alt:S.frontal},
+        {n:"Elevação lateral",t:"Repetições parciais após a falha",i:"45 s",s:["3x 8-12"],alt:S.lateral},
+        {n:"Elevação lateral + remada alta com barra",t:"Bi-set",i:"60 s",s:["3x 8-12"],alt:["Elevação lateral + remada alta na polia","Lateral na máquina + remada alta com halteres"]},
+        {n:"Elevação lateral unilateral no cabo",t:"Pico de contração de 2s",i:"45 s",s:["3x 8-12"],alt:["Lateral unilateral com halter apoiado no banco","Lateral unilateral na máquina","Lateral com elástico"]},
+        {n:"Supino inclinado com halteres",t:"—",i:"45 s",s:["3x 8-12"],alt:S.supInc},
+        {n:"Voador",t:"—",i:"45 s",s:["3x 8-12"],alt:S.voador}
+      ]},
+      E:{dia:"SÁB",ex:[
+        {n:"Abdominal supra na prancha",t:"—",i:"45 s",s:["3x RM"],alt:S.supra},
+        {n:"Abdominal infra na torre",t:"—",i:"45 s",s:["3x RM"],alt:S.infra},
+        {n:"Rosca direta barra em pé",t:"Progressão de carga e drop",i:"1 a 2 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.roscaBarra},
+        {n:"Rosca scott na máquina ou no cross",t:"3/7",i:"60 s",s:["3x 8-12"],alt:S.roscaScott},
+        {n:"Rosca direta com halteres no banco 45 graus",t:"Pico de contração",i:"60 s",s:["4x 8-12"],alt:S.roscaBanco},
+        {n:"Rosca martelo corda",t:"—",i:"60 s",s:["3x 8-12"],alt:S.roscaMartelo},
+        {n:"Tríceps testa com corda no banco 45",t:"Progressão de carga e repetições parciais após a falha",i:"1 a 2 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.tricepsTesta},
+        {n:"Tríceps corda",t:"Pico de contração de 2s",i:"60 s",s:["4x 8-12"],alt:S.tricepsCorda},
+        {n:"Tríceps francês sentado com corda",t:"Drop",i:"60 s",s:["4x 8-12 + drop em todas"],alt:S.tricepsFrances}
+      ]}
+    }
+  },
+
+  abc:{
+    nome:"ABC 6x na semana",
+    resumo:"Costas, peito/ombros e pernas, repetindo duas vezes",
+    semana:{1:"A",2:"B",3:"C",5:"A",6:"B",0:"C"},
+    treinos:{
+      A:{dia:"SEG/SEX",ex:[
+        {n:"Remada curvada pronada",t:"Progressão de carga",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"],alt:S.remCurv},
+        {n:"Serrote",t:"Progressão de carga",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10"],alt:S.serrote},
+        {n:"Remada baixa pegada aberta",t:"Progressão de carga",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause de 10s"],alt:S.remBaixaAberta},
+        {n:"Pulley frente triângulo",t:"Pico de contração de 2s e rest pause",i:"30 s / 90 s",s:["2x 10-15 (int. 30s)","2x 8-12 (int. 90s)","1x 6-10 + 2 rest pause"],alt:S.pulleyTri},
+        {n:"Meio Terra",t:"Progressão de carga",i:"2 min",s:["1x 10-15","1x 8-12","1x 6-10"],alt:S.terra},
+        {n:"Rosca scott máquina ou cabo",t:"Progressão de carga",i:"1 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drops"],alt:S.roscaScott},
+        {n:"Abdômen infra na torre",t:"—",i:"45 s",s:["3x RM"],alt:S.infra}
+      ]},
+      B:{dia:"TER/SÁB",ex:[
+        {n:"Supino inclinado com halteres ou máquina",t:"Progressão de carga",i:"2 a 3 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"],alt:S.supInc},
+        {n:"Supino reto halteres ou máquina",t:"Progressão de carga",i:"2 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause de 10s"],alt:S.supReto},
+        {n:"Supino declinado barra ou máquina",t:"—",i:"45 s",s:["3x 8-12 + 2 drops na última"],alt:S.supDecl},
+        {n:"Voador",t:"Pico de contração de 2s",i:"45 s",s:["2x 8-12"],alt:S.voador},
+        {n:"Elevação frontal com corda",t:"—",i:"60 s",s:["3x 8-12 + 2 rest pause de 10s na última"],alt:S.frontal},
+        {n:"Elevação lateral sentado com halteres",t:"Repetições parciais após a falha",i:"60 s",s:["3x 8-12 + 10 parciais"],alt:S.lateral},
+        {n:"Tríceps corda",t:"—",i:"60 s",s:["3x 8-12"],alt:S.tricepsCorda},
+        {n:"Panturrilha máquina em pé",t:"Progressão de carga",i:"1 min",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drops"],alt:S.panturrilhaPe}
+      ]},
+      C:{dia:"QUA/DOM",ex:[
+        {n:"Extensor",t:"Progressão de carga",i:"2 min",s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"],alt:S.extensor},
+        {n:"Hack machine",t:"Progressão de carga e rest pause",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause"],alt:S.hack},
+        {n:"Leg 45°",t:"Repetições parciais após a falha",i:"90 s",s:["3x 10-15 + 10 parciais"],alt:S.leg45},
+        {n:"Stiff",t:"Progressão de carga",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10"],alt:S.stiff},
+        {n:"Flexor deitado",t:"Progressão de carga",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10 + 2 drop"],alt:S.flexorDeit},
+        {n:"Elevação de quadril",t:"Progressão de carga",i:"90 s",s:["1x 10-15","1x 8-12","1x 6-10 + 2 rest pause de 10s"],alt:S.quadril}
+      ]}
+    }
+  },
+
+  iniciante:{
+    nome:"Iniciante 4x na semana",
+    resumo:"AB repetido, tudo em 3x 10-15 com 1 min de intervalo",
+    semana:{1:"A",2:"B",4:"A",5:"B"},
+    treinos:{
+      A:{dia:"SEG/QUI",ex:[
+        {n:"Supino inclinado barra",t:"—",i:"1 min",s:["3x 10-15"],alt:S.supInc},
+        {n:"Supino reto barra",t:"—",i:"1 min",s:["3x 10-15"],alt:S.supReto},
+        {n:"Pulley frente aberto",t:"—",i:"1 min",s:["3x 10-15"],alt:S.pulleyAberto},
+        {n:"Remada baixa triângulo",t:"—",i:"1 min",s:["3x 10-15"],alt:S.remTriangulo},
+        {n:"Desenvolvimento sentado halteres",t:"—",i:"1 min",s:["3x 10-15"],alt:S.desenv},
+        {n:"Elevação lateral",t:"—",i:"1 min",s:["3x 10-15"],alt:S.lateral},
+        {n:"Tríceps corda",t:"—",i:"1 min",s:["3x 10-15"],alt:S.tricepsCorda},
+        {n:"Rosca direta barra",t:"—",i:"1 min",s:["3x 10-15"],alt:S.roscaBarra}
+      ]},
+      B:{dia:"TER/SEX",ex:[
+        {n:"Leg 45",t:"—",i:"1 min",s:["3x 10-15"],alt:S.leg45},
+        {n:"Extensor",t:"—",i:"1 min",s:["3x 10-15"],alt:S.extensor},
+        {n:"Flexor sentado",t:"—",i:"1 min",s:["3x 10-15"],alt:S.flexorSent},
+        {n:"Flexor deitado",t:"—",i:"1 min",s:["3x 10-15"],alt:S.flexorDeit},
+        {n:"Abdutor",t:"—",i:"1 min",s:["3x 10-15"],alt:S.abdutor},
+        {n:"Adutor",t:"No PDF aparece “Abdutor” duas vezes; pelo contexto o segundo é o adutor",i:"1 min",s:["3x 10-15"],alt:S.adutor},
+        {n:"Panturrilha em pé na máquina ou no smith com step",t:"—",i:"1 min",s:["3x 10-15"],alt:S.panturrilhaPe},
+        {n:"Abdominal supra no solo",t:"—",i:"1 min",s:["3x 15-20"],alt:S.supra}
+      ]}
+    }
+  }
+};
+
+const elVoltar=document.getElementById("voltar");
+const elTitulo=document.getElementById("titulo");
+const elTag=document.getElementById("tag");
+const elRail=document.getElementById("rail");
+const elNote=document.getElementById("note");
+const elConteudo=document.getElementById("conteudo");
+const elRodape=document.getElementById("rodape");
+
+let planoAtual=null;
+
+function icone(tipo){
+  if(tipo==="ig") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>';
+}
+
+function home(){
+  planoAtual=null;
+  elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
+  elTitulo.textContent="Treinos"; elTag.textContent="";
+  elRodape.textContent="Escolha a planilha que você vai usar.";
+  elConteudo.innerHTML='<p class="intro">Três planilhas disponíveis.</p>';
+  Object.keys(PLANOS).forEach(k=>{
+    const p=PLANOS[k];
+    const letras=Object.keys(p.treinos);
+    const b=document.createElement("button");
+    b.className="plano"; b.type="button";
+    b.innerHTML=`<h2>${p.nome}</h2><p>${p.resumo}</p><p>Treinos ${letras.join(", ")}</p>`;
+    b.addEventListener("click",()=>abrirPlano(k));
+    elConteudo.appendChild(b);
+  });
+  window.scrollTo({top:0});
+}
+
+function abrirPlano(k){
+  planoAtual=k;
+  const p=PLANOS[k];
+  elVoltar.hidden=false;
+  elTitulo.textContent=p.nome;
+  elRail.hidden=false; elRail.innerHTML="";
+  elRodape.textContent="Toque numa série para marcar como feita. As marcações somem ao trocar de treino.";
+
+  Object.keys(p.treinos).forEach(t=>{
+    const b=document.createElement("button");
+    b.className="day"; b.type="button"; b.setAttribute("role","tab"); b.dataset.t=t;
+    b.innerHTML=`<b>${t}</b><small>${p.treinos[t].dia}</small>`;
+    b.addEventListener("click",()=>selecionar(t));
+    elRail.appendChild(b);
+  });
+
+  const hoje=new Date().getDay();
+  const doDia=p.semana[hoje];
+  elTag.textContent=doDia?"hoje":"descanso";
+  elNote.hidden=!!doDia;
+  if(!doDia) elNote.textContent="Nesta planilha, hoje é descanso. Escolha um treino acima se quiser adiantar.";
+
+  selecionar(doDia||Object.keys(p.treinos)[0]);
+}
+
+function selecionar(t){
+  const p=PLANOS[planoAtual];
+  [...elRail.children].forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));
+  elConteudo.innerHTML="";
+
+  p.treinos[t].ex.forEach((e,idx)=>{
+    const busca=e.n.replace(/ ou .*$/,"").replace(/ \+ .*$/,"");
+    const el=document.createElement("article");
+    el.className="ex";
+    el.innerHTML=`
+      <div class="ex-head">
+        <span class="idx">${idx+1}</span>
+        <div>
+          <h3>${e.n}</h3>
+          ${e.t!=="—"?`<p class="tech">${e.t}</p>`:""}
+          ${e.i!=="—"?`<p class="rest">Intervalo: ${e.i}</p>`:""}
+        </div>
+      </div>
+      <div class="sets">${e.s.map(s=>`<button class="set" type="button" aria-pressed="false">${s}</button>`).join("")}</div>
+      <div class="actions">
+        <button class="btn swap" type="button" aria-expanded="false">Máquina ocupada</button>
+        <a class="btn" href="${IG+encodeURIComponent(busca+" execução")}" target="_blank" rel="noopener">${icone("ig")}Instagram</a>
+        <a class="btn" href="${YT+encodeURIComponent(busca+" execução correta")}" target="_blank" rel="noopener">${icone("yt")}YouTube</a>
+      </div>
+      <div class="subs" hidden>
+        <p>Substituições que mantêm o estímulo</p>
+        <ul>${e.alt.map(a=>`<li>${a}</li>`).join("")}</ul>
+      </div>`;
+
+    el.querySelectorAll(".set").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        btn.setAttribute("aria-pressed",btn.getAttribute("aria-pressed")==="true"?"false":"true");
+      });
+    });
+
+    const swap=el.querySelector(".swap"), subs=el.querySelector(".subs");
+    swap.addEventListener("click",()=>{
+      const aberto=swap.getAttribute("aria-expanded")==="true";
+      swap.setAttribute("aria-expanded",String(!aberto));
+      subs.hidden=aberto;
+      swap.textContent=aberto?"Máquina ocupada":"Fechar substituições";
+    });
+
+    elConteudo.appendChild(el);
+  });
+  window.scrollTo({top:0});
+}
+
+elVoltar.addEventListener("click",home);
+home();
+</script>
+</body>
+</html>
