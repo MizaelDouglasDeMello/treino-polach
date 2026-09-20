@@ -1,0 +1,22 @@
+name: Checagens
+
+# Roda a cada push e em pull request. A que mais importa e a das planilhas
+# marcadas semAbdomen: trocar um bloco seguro por um generico nao quebra nada
+# na tela, so faz o painel "Maquina ocupada" voltar a sugerir exercicio
+# contraindicado. Sem isso aqui, passaria calado.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checagens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node checagens.js
