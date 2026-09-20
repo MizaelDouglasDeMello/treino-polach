@@ -92,7 +92,12 @@ você não perde o lugar no meio do treino.
 ### 1. Planilhas
 
 A tela inicial. Cada planilha mostra nome, resumo, frequência e quais treinos
-tem. No fim ficam os botões de [backup](#backup).
+tem.
+
+No fim, **Limpar tudo de hoje** zera as marcações e cargas do dia em todas as
+planilhas de uma vez — útil quando você começou o treino errado ou quer
+recomeçar. Ele só aparece quando há algo para limpar, pede confirmação, e **não
+toca no histórico nem nos ajustes**. Depois vêm os botões de [backup](#backup).
 
 ### 2. Treino
 
@@ -111,7 +116,8 @@ aberto.
 
 - **Marcar série feita** — toque na série e ela fica preenchida. Fica salvo
   até o fim do dia, então trocar de treino, fechar o app ou recarregar não
-  perde nada.
+  perde nada. Para zerar, "Limpar este treino" no rodapé da lista, ou
+  "Limpar tudo de hoje" na tela inicial.
 - **Anotar a carga** — um campo por série. `4x 6-10` vira quatro linhas, uma
   para cada série, porque é assim que dá para registrar progressão dentro do
   próprio exercício.

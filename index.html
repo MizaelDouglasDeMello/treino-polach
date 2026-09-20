@@ -903,6 +903,10 @@ function home(){
     elConteudo.appendChild(b);
   });
 
+  elConteudo.insertAdjacentHTML("beforeend",blocoHoje());
+  const btHoje=document.getElementById("limparHoje");
+  if(btHoje) btHoje.addEventListener("click",limparODia);
+
   elConteudo.insertAdjacentHTML("beforeend",blocoBackup());
   ligarBackup();
   window.scrollTo({top:0,behavior:"instant"});
@@ -1271,6 +1275,29 @@ function importarBackup(dados){
     sessao=dados.sessao; gravaJSON(K_SESSAO,sessao);
   }
   return novos;
+}
+
+function limparODia(){
+  const marcas=Object.keys(sessao.feito||{}).length;
+  const cargas=Object.keys(sessao.carga||{}).length;
+  if(!marcas && !cargas) return;
+  if(!confirm("Isso apaga as marcações e as cargas digitadas hoje, em todas as planilhas. "+
+              "O histórico dos treinos anteriores não é tocado. Continuar?")) return;
+  sessao={dia:dataHoje(),feito:{},carga:{}};
+  gravaJSON(K_SESSAO,sessao);
+  home();
+}
+
+function blocoHoje(){
+  const exercicios=new Set(Object.keys(sessao.feito||{}).concat(Object.keys(sessao.carga||{})));
+  if(!exercicios.size) return "";
+  const n=exercicios.size;
+  return '<div class="mt-4 pt-3 border-top">'+
+    '<p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.72rem">Hoje</p>'+
+    '<p class="text-body-secondary small">'+n+(n>1?" exercícios com":" exercício com")+
+    ' marcação ou carga anotada hoje.</p>'+
+    '<button class="btn btn-outline-danger btn-sm w-100" id="limparHoje" type="button">'+
+      'Limpar tudo de hoje</button></div>';
 }
 
 function blocoBackup(){
