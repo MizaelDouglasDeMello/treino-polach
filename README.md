@@ -11,10 +11,15 @@ do dia; se hoje for descanso, avisa e deixa você escolher outro.
 
 ## No celular
 
-Vale adicionar à tela de início — assim abre em tela cheia, sem a barra do
-Safari:
+Instale na tela de início — abre em tela cheia, com ícone próprio, e passa a
+**funcionar sem internet**:
 
 **Safari → botão de compartilhar → Adicionar à Tela de Início.**
+
+Na primeira abertura com sinal, o app guarda tudo que precisa (a página, o
+Bootstrap e os ícones). Depois disso abre no subsolo da academia, no modo
+avião, com o Wi-Fi caindo — tanto faz. Quando houver sinal ele busca a versão
+mais nova; sem sinal, usa a que está guardada.
 
 O app segue o tema claro ou escuro do aparelho. O botão de sol/lua no topo
 troca manualmente, e a escolha fica guardada.
@@ -111,11 +116,24 @@ Quando o app abre e o dia virou, as cargas da sessão passam para o histórico
 e o dia recomeça limpo. O histórico é indexado pelo **nome do exercício**, não
 pela planilha: a carga do supino é a mesma esteja ele em que planilha estiver.
 
-> **Duas ressalvas.** O app não tem noção de usuário: se o Mizael e a Carol
-> abrirem no mesmo aparelho e navegador, as cargas se misturam. Em celulares
-> separados não há problema. E o Safari pode limpar dados de sites que ficam
-> dias sem abrir — adicionar à tela de início reduz o risco, mas ainda não
-> existe exportação de backup.
+> **Ressalva.** O app não tem noção de usuário: se o Mizael e a Carol abrirem
+> no mesmo aparelho e navegador, as cargas se misturam. Em celulares separados
+> não há problema.
+
+### Backup
+
+No fim da tela inicial, **Exportar** salva um `.json` com o histórico e o dia
+em andamento — no iPhone ele vai para o app Arquivos ou para onde você mandar
+pelo botão de compartilhar. **Importar** lê esse arquivo de volta.
+
+A importação **junta, não substitui**: restaurar um backup antigo não apaga o
+que foi registrado depois. Sessão do mesmo exercício na mesma data conta como
+a mesma, então importar duas vezes não duplica nada. Arquivo que não for um
+backup deste app é recusado com aviso.
+
+Vale exportar de vez em quando: o histórico existe só no aparelho, e o Safari
+pode limpar dados de sites que ficam dias sem abrir. Instalar na tela de início
+reduz esse risco, mas não elimina.
 
 ### Os links de busca
 
@@ -142,11 +160,22 @@ pouco conteúdo — nesses casos o YouTube é o atalho mais confiável.
 
 ```
 index.html                     o app inteiro: dados, estilo e lógica
+manifest.webmanifest           nome, cores e ícones do app instalado
+sw.js                          service worker: é o que faz abrir sem sinal
+icons/                         ícones do app (PNG, gerados)
 vendor/
   bootstrap.min.css            Bootstrap 5.3.3
   bootstrap.bundle.min.js      Bootstrap 5.3.3
   icons/*.svg                  ícones de origem (Bootstrap Icons 1.11.3)
 ```
+
+O `sw.js` busca o `index.html` **na rede primeiro**, caindo para o cache quando
+não há sinal — assim um push novo aparece na abertura seguinte, em vez de ficar
+preso numa versão antiga. Os arquivos do `vendor/` e `icons/`, que praticamente
+não mudam, vêm do cache primeiro.
+
+> Ao trocar arquivos do shell, suba o `VERSAO` no topo do `sw.js`. É o que
+> descarta o cache antigo nos aparelhos já instalados.
 
 Nada vem de CDN — na academia o sinal cai, e o app precisa abrir mesmo
 assim. Os ícones não usam a fonte do Bootstrap Icons: eram 176 KB de woff2

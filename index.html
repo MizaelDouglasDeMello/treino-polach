@@ -11,6 +11,10 @@
 <meta name="format-detection" content="telephone=no">
 <title>Treinos</title>
 
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+
 <!-- Bootstrap 5.3.3, servido do proprio repositorio para funcionar sem internet -->
 <link href="vendor/bootstrap.min.css" rel="stylesheet">
 
@@ -789,6 +793,9 @@ function home(){
     b.addEventListener("click",()=>abrirPlano(k));
     elConteudo.appendChild(b);
   });
+
+  elConteudo.insertAdjacentHTML("beforeend",blocoBackup());
+  ligarBackup();
   window.scrollTo({top:0});
 }
 
@@ -943,6 +950,92 @@ function selecionar(t){
     elConteudo.appendChild(el);
   });
   window.scrollTo({top:0});
+}
+
+/* ---------- backup ---------- */
+function coletarBackup(){
+  return {
+    app:"treinos", versao:1, exportadoEm:new Date().toISOString(),
+    sessao:leJSON(K_SESSAO,null),
+    historico:leJSON(K_HIST,{})
+  };
+}
+
+function exportarBackup(){
+  const nome="treinos-backup-"+dataHoje()+".json";
+  const blob=new Blob([JSON.stringify(coletarBackup(),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* Junta em vez de substituir: restaurar um backup antigo nao pode apagar o que
+   foi registrado depois. Mesma data do mesmo exercicio conta como o mesmo treino. */
+function importarBackup(dados){
+  if(!dados||dados.app!=="treinos"||typeof dados.historico!=="object") throw new Error("formato");
+  let novos=0;
+  Object.keys(dados.historico).forEach(nome=>{
+    const vindos=Array.isArray(dados.historico[nome])?dados.historico[nome]:[];
+    const atuais=historico[nome]||[];
+    const dias=new Set(atuais.map(r=>r.d));
+    vindos.forEach(r=>{ if(r&&r.d&&!dias.has(r.d)){ atuais.push(r); dias.add(r.d); novos++; } });
+    historico[nome]=atuais.sort((a,b)=>String(b.d).localeCompare(String(a.d))).slice(0,8);
+  });
+  gravaJSON(K_HIST,historico);
+
+  // a sessao so volta se for do mesmo dia; a de ontem ja virou historico
+  if(dados.sessao&&dados.sessao.dia===dataHoje()){
+    sessao=dados.sessao; gravaJSON(K_SESSAO,sessao);
+  }
+  return novos;
+}
+
+function blocoBackup(){
+  const exercicios=Object.keys(historico).length;
+  const registros=Object.values(historico).reduce((n,l)=>n+l.length,0);
+  const resumo=exercicios
+    ? exercicios+(exercicios>1?" exercícios":" exercício")+" com carga registrada, "+
+      registros+(registros>1?" sessões":" sessão")+"."
+    : "Nenhuma carga registrada ainda.";
+  return '<div class="mt-4 pt-3 border-top">'+
+    '<p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.72rem">Backup</p>'+
+    '<p class="text-body-secondary small">'+resumo+
+    ' O histórico fica só neste aparelho e o Safari pode apagá-lo. Guarde uma cópia de vez em quando.</p>'+
+    '<div class="d-flex gap-2">'+
+      '<button class="btn btn-outline-secondary btn-sm flex-fill" id="exportar" type="button">Exportar</button>'+
+      '<label class="btn btn-outline-secondary btn-sm flex-fill mb-0" for="importar">Importar</label>'+
+      '<input type="file" id="importar" accept="application/json,.json" class="d-none">'+
+    '</div></div>';
+}
+
+function ligarBackup(){
+  document.getElementById("exportar").addEventListener("click",exportarBackup);
+  document.getElementById("importar").addEventListener("change",ev=>{
+    const arq=ev.target.files&&ev.target.files[0];
+    if(!arq) return;
+    const leitor=new FileReader();
+    leitor.onload=()=>{
+      try{
+        const dados=JSON.parse(leitor.result);
+        const novos=importarBackup(dados);
+        alert(novos?("Backup restaurado: "+novos+" sessão(ões) acrescentada(s)."):
+                     "Backup lido. Nada de novo para acrescentar.");
+        home();
+      }catch(err){ alert("Não consegui ler esse arquivo. Ele precisa ser um backup exportado por este app."); }
+    };
+    leitor.onerror=()=>alert("Não consegui ler o arquivo.");
+    leitor.readAsText(arq);
+    ev.target.value="";
+  });
+}
+
+/* ---------- service worker: abrir sem sinal ---------- */
+if("serviceWorker" in navigator && location.protocol!=="file:"){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  });
 }
 
 elVoltar.innerHTML=ic("chevron-left","me-1")+"Voltar";
