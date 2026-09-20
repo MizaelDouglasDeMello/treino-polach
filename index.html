@@ -134,7 +134,8 @@ const S = {
   remadaApoiadaSegura:["Remada pronada na máquina com peito apoiado","Remada na máquina pegada neutra","Remada baixa sentada com barra reta"],
   puxadaSegura:["Pulldown na máquina","Puxada na polia com pegada neutra","Puxada supinada na polia"],
   desenvSeguro:["Desenvolvimento na máquina","Desenvolvimento sentado no smith","Desenvolvimento sentado com halteres"],
-  panturrilhaSegura:["Panturrilha no leg press","Panturrilha sentada na máquina","Panturrilha em pé na máquina"]
+  panturrilhaSegura:["Panturrilha no leg press","Panturrilha sentada na máquina","Panturrilha em pé na máquina"],
+  tricepsSeguro:["Tríceps na polia com barra reta","Tríceps corda na polia alta","Tríceps coice na polia"]
 };
 
 const PLANOS = {
@@ -431,6 +432,53 @@ const PLANOS = {
         {n:"Tríceps corda",t:"—",i:"45 s",s:["3x 12-15"],alt:S.tricepsCorda},
         {n:"Rosca alternada com halteres",t:"—",i:"45 s",s:["3x 10-12"],alt:S.roscaBanco},
         {n:"Elíptico ou esteira inclinada lado a lado",t:"Fecha junto. Ritmo em que os dois conseguem conversar",i:"—",s:["20 min"],alt:S.cardioLeve}
+      ]}
+    }
+  },
+
+  duplaCompleta:{
+    nome:"Em Dupla — Divisão Completa",
+    freq:"5x por semana",
+    resumo:"Mesma divisão A–E das individuais, para treinarem juntos a semana inteira",
+    semana:{1:"A",2:"B",3:"C",4:"D",5:"E"},
+    treinos:{
+      A:{dia:"SEG",ex:[
+        {n:"Supino reto na máquina",t:"Revezem na mesma máquina: um faz, o outro ajusta a carga",i:"90 s",s:["3x 10-12"],alt:S.supReto},
+        {n:"Supino inclinado com halteres",t:"Banco a 30°. Um passa os halteres para o outro",i:"90 s",s:["3x 10-12"],alt:S.supInc},
+        {n:"Crucifixo na máquina",t:"Cotovelo semi-flexionado fixo",i:"60 s",s:["3x 12-15"],alt:S.voador},
+        {n:"Tríceps corda",t:"Cotovelo parado ao lado do corpo",i:"60 s",s:["3x 12-15"],alt:S.tricepsCorda},
+        {n:"Tríceps na máquina",t:"Fecha o braço sem roubar com o ombro",i:"60 s",s:["3x 10-12"],alt:S.tricepsSeguro}
+      ]},
+      B:{dia:"TER",ex:[
+        {n:"Leg press 45°",t:"Carga alta para ele, moderada para ela. Expirar na subida",i:"90 s",s:["3x 12-15"],alt:S.leg45},
+        {n:"Cadeira extensora",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.extensorSeguro},
+        {n:"Agachamento no smith com pés à frente",t:"Barra apoiada tira a carga da coluna",i:"90 s",s:["3x 10-12"],alt:S.agachoApoiado},
+        {n:"Cadeira abdutora",t:"Tronco levemente à frente, 2s na abertura",i:"45 s",s:["3x 15-20"],alt:S.abdutor},
+        {n:"Panturrilha em pé",t:"Amplitude total, 2s embaixo",i:"45 s",s:["3x 15-20"],alt:S.panturrilhaSegura}
+      ]},
+      C:{dia:"QUA",ex:[
+        {n:"Puxada frente pegada aberta",t:"Puxa com o cotovelo, peito para cima",i:"90 s",s:["3x 10-12"],alt:S.puxadaSegura},
+        {n:"Remada sentada com triângulo",t:"Sentada e apoiada, sem inclinar o tronco",i:"90 s",s:["3x 10-12"],alt:S.remadaSentadaSegura},
+        {n:"Remada com peito apoiado",t:"Peito colado no apoio",i:"60 s",s:["3x 12-15"],alt:S.remadaApoiadaSegura},
+        {n:"Crucifixo invertido",t:"Carga leve, foco no posterior de ombro",i:"45 s",s:["3x 15"],alt:S.crucInv},
+        {n:"Rosca direta com barra",t:"Cotovelo parado na lateral do corpo",i:"60 s",s:["3x 10-12"],alt:S.roscaBarra},
+        {n:"Rosca martelo",t:"—",i:"45 s",s:["3x 10-12"],alt:S.roscaMartelo}
+      ]},
+      D:{dia:"QUI",ex:[
+        {n:"Mesa flexora",t:"Quadril colado no banco, volta em 3s",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Flexor sentado",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Extensão de quadril na máquina",t:"Substitui a elevação pélvica: mesmo glúteo, sem carga sobre o abdômen",i:"60 s",s:["3x 12-15"],alt:S.gluteoSeguro},
+        {n:"Coice na polia baixa",t:"Uma série de cada perna, sem arquear a lombar",i:"45 s",s:["3x 15 cada perna"],alt:S.gluteoPolia},
+        {n:"Cadeira adutora",t:"2s no fechamento",i:"45 s",s:["3x 15-20"],alt:S.adutor},
+        {n:"Panturrilha sentada",t:"—",i:"45 s",s:["3x 15-20"],alt:S.panturrilhaSent}
+      ]},
+      E:{dia:"SEX",ex:[
+        {n:"Desenvolvimento sentado na máquina",t:"Encosto apoiado protege a lombar",i:"90 s",s:["3x 10-12"],alt:S.desenvSeguro},
+        {n:"Elevação lateral",t:"Sobe só até a linha do ombro",i:"45 s",s:["4x 12-15"],alt:S.lateral},
+        {n:"Elevação frontal com halteres",t:"Alternada, carga leve",i:"45 s",s:["3x 12-15"],alt:S.frontal},
+        {n:"Rosca scott",t:"Não estica 100% embaixo, mantém tensão",i:"60 s",s:["3x 10-12"],alt:S.roscaScott},
+        {n:"Tríceps francês",t:"Alonga bem embaixo antes de subir",i:"60 s",s:["3x 10-12"],alt:S.tricepsFrances},
+        {n:"Elíptico ou esteira inclinada lado a lado",t:"Fecha a semana junto. Ritmo em que os dois conseguem conversar",i:"—",s:["20 min"],alt:S.cardioLeve}
       ]}
     }
   }

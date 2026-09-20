@@ -27,12 +27,42 @@ troca manualmente, e a escolha fica guardada.
 
 ## As planilhas
 
+**Abertas** — servem para qualquer pessoa:
+
 | Planilha | Frequência | Divisão |
 |---|---|---|
 | Hipertrofia Avançada | 5x por semana | A–E, alto volume, ênfase em peito e ombros |
 | Hipertrofia Intermediária | 6x por semana | ABC repetido duas vezes |
 | Adaptação Iniciante | 4x por semana | AB, 3x 10-15 em tudo |
 | Força e Hipertrofia | 4x por semana | Dias 1–4, baixo volume e cargas altas |
+
+**Personalizadas** — montadas a partir dos dados de cada um:
+
+| Planilha | Frequência | Divisão |
+|---|---|---|
+| Mizael — Preservação Muscular | 5x por semana | A–E, superior/inferior com cardio de baixo impacto |
+| Carol — Definição e Força | 5x por semana | A–E, máquinas e posições apoiadas |
+| Em Dupla — Corpo Inteiro | 3x por semana | A–C em seg/qua/sex, revezando na máquina |
+| Em Dupla — Divisão Completa | 5x por semana | A–E, mesma divisão das individuais |
+
+### Restrições nas planilhas personalizadas
+
+A planilha da Carol e as duas em dupla são montadas **sem força direta no
+abdômen**, por causa de endometriose. Ficam de fora abdominal direto,
+elevação pélvica, levantamento terra, stiff pesado, agachamento livre e
+remada curvada — tudo que aumenta a pressão intra-abdominal. O glúteo é
+trabalhado por extensão de quadril na máquina, coice na polia e abdutora.
+
+Isso vale também para as **substituições**. Os blocos genéricos de `S` são
+compartilhados entre planilhas e carregam variações com carga axial ou
+tronco livre; se usados nessas três, o botão "Máquina ocupada" sugeriria
+justamente o que precisa ser evitado. Por isso existem blocos paralelos com
+sufixo `Seguro`/`Segura` (`flexorSeguro`, `remadaApoiadaSegura`,
+`puxadaSegura`, `gluteoSeguro`…), usados só por elas.
+
+> **Ao editar essas três planilhas, use os blocos seguros.** Trocar por um
+> bloco genérico não quebra nada e não aparece na tela — só volta a sugerir
+> exercício contraindicado dentro do painel de substituições.
 
 ## O que dá para fazer
 
@@ -67,12 +97,18 @@ Tudo fica em dois objetos no `<script>` do `index.html`.
 
 ### `S` — substituições reaproveitáveis
 
-43 blocos, um por padrão de movimento. Servem para não repetir a mesma lista
-em várias planilhas:
+Um bloco por padrão de movimento, para não repetir a mesma lista em várias
+planilhas:
 
 ```js
 supReto:["Supino reto com barra","Supino reto na máquina","Supino reto no smith"],
 ```
+
+Os blocos com sufixo `Seguro`/`Segura` são as versões sem carga axial nem
+tronco livre, descritas em [Restrições](#restrições-nas-planilhas-personalizadas).
+
+Se um bloco contiver o próprio exercício que está sendo substituído, o app
+descarta essa linha ao montar a tela — não precisa caçar repetição na mão.
 
 ### `PLANOS` — as planilhas
 
@@ -115,6 +151,13 @@ O valor é a letra (ou número) do treino dentro de `treinos`:
 | `i` | intervalo — use `"—"` para não mostrar nada |
 | `s` | lista de séries; **cada item vira um botão** de marcar |
 | `alt` | substituições: um bloco de `S` ou uma lista escrita ali mesmo |
+
+O cardio entra como um exercício comum, com a duração no lugar das séries:
+
+```js
+{n:"Caminhada inclinada na esteira", t:"Ritmo em que ainda dá para conversar",
+ i:"—", s:["20 a 25 min"], alt:S.caminhada}
+```
 
 Para uma planilha nova, basta acrescentar uma chave em `PLANOS` — a home e a
 navegação se montam sozinhas a partir dela.
