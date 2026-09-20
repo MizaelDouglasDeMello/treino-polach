@@ -73,8 +73,11 @@ sufixo `Seguro`/`Segura` (`flexorSeguro`, `remadaApoiadaSegura`,
   Tem `+30s` e botão de parar. Ao zerar, mostra "Pode ir", apita e some
   sozinha depois de 10 s.
 - **Máquina ocupada** — abre substituições que mantêm o mesmo estímulo do
-  exercício, para quando o aparelho estiver em uso.
+  exercício, para quando o aparelho estiver em uso. Cada substituição tem os
+  próprios atalhos de Instagram e YouTube.
 - **Instagram / YouTube** — busca a execução daquele exercício.
+- **Botão de som** — no topo, desliga o apito do cronômetro. A escolha fica
+  guardada.
 
 ### Sobre o cronômetro
 
@@ -89,6 +92,25 @@ certa se o iPhone congelar o timer com a tela apagada.
 > lateral de mudo, e não há como contornar isso pela página. A vibração
 > também não funciona: o iOS não suporta a API. Na prática, conte com a barra
 > na tela — e, se treinar no mudo, deixe o app visível.
+
+### Os links de busca
+
+O YouTube aceita busca por palavra na URL, então o link leva direto ao termo.
+
+O Instagram não. A rota `/explore/search/keyword/?q=` responde **302 para a
+tela de login** e o app do celular não a reconhece — abre a busca vazia, sem
+o termo. A única rota que o app entende é a de hashtag, então `tagIG()` monta
+uma tag a partir do nome: tira acentos e palavras como "de" e "com", e junta
+as duas primeiras palavras restantes.
+
+```
+Supino reto            -> #supinoreto
+Elevação lateral       -> #elevacaolateral
+Remada baixa aberta    -> #remadabaixa
+```
+
+Funciona bem para exercício de nome comum. Para nome raro, a tag pode ter
+pouco conteúdo — nesses casos o YouTube é o atalho mais confiável.
 
 ---
 
