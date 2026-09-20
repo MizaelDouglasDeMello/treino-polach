@@ -48,6 +48,20 @@
   .idx{width:2rem;height:2rem;display:grid;place-items:center;flex:0 0 auto}
   .min-w-0{min-width:0}
   .tracking{letter-spacing:.08em}
+
+  /* calendario */
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-cabeca div{text-align:center;font-size:.66rem;font-weight:700;letter-spacing:.06em;
+                  color:var(--bs-secondary-color);text-transform:uppercase}
+  .cal-dia{aspect-ratio:1;display:grid;place-items:center;border-radius:9px;
+           font-size:.8rem;font-weight:600;border:1px solid var(--bs-border-color);
+           background:var(--bs-body-bg);color:var(--bs-body-color);padding:0}
+  .cal-dia.vazio{visibility:hidden}
+  .cal-dia:disabled{opacity:1}
+  .cal-dia.futuro{opacity:.3}
+  .cal-dia.feito{background:var(--bs-primary);border-color:var(--bs-primary);color:#fff}
+  .cal-dia.hoje{box-shadow:0 0 0 2px var(--bs-primary)}
+  .cal-dia.aberto{outline:2px solid var(--bs-primary);outline-offset:1px}
   .bi{width:1em;height:1em;vertical-align:-.125em;flex:0 0 auto}
 
   /* series e carga, lado a lado em uma linha por serie */
@@ -550,7 +564,12 @@ const ICONES = {
   "check2":'<path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>',
   "volume-up-fill":'<path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/> <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/> <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>',
   "volume-mute-fill":'<path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06m7.137 2.096a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0"/>',
-  "sliders":'<path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>'
+  "sliders":'<path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>',
+  "calendar3":'<path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z"/> <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>',
+  "fire":'<path d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16m0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15"/>',
+  "check-circle-fill":'<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>',
+  "circle":'<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>',
+  "trophy":'<path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935M3.504 1q.01.775.056 1.469c.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.5.5 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667q.045-.694.056-1.469z"/>'
 };
 function ic(nome,classe){
   return '<svg class="bi '+(classe||"")+'" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">'+ICONES[nome]+'</svg>';
@@ -621,7 +640,7 @@ function arquivarSessao(s){
 
 if(!sessao||sessao.dia!==dataHoje()){
   arquivarSessao(sessao);
-  sessao={dia:dataHoje(),feito:{},carga:{}};
+  sessao={dia:dataHoje(),feito:{},carga:{},exFeito:{}};
   gravaJSON(K_SESSAO,sessao);
 }
 
@@ -689,9 +708,10 @@ function ultimaCarga(nome){
 
 function limparTreino(){
   const pref=planoAtual+"|"+treinoAtual+"|";
-  [sessao.feito,sessao.carga].forEach(obj=>{
+  [sessao.feito,sessao.carga,sessao.exFeito||{}].forEach(obj=>{
     Object.keys(obj).forEach(k=>{ if(k.indexOf(pref)===0) delete obj[k]; });
   });
+  removerTreino(planoAtual,treinoAtual);
   gravaJSON(K_SESSAO,sessao);
   selecionar(treinoAtual,"replace");
 }
@@ -729,6 +749,209 @@ function cronoBotoes(e){
     `<button type="button" class="crono btn btn-sm rounded-pill bg-primary-subtle text-primary-emphasis border-0 fw-semibold"
              data-seg="${d.seg}" data-nome="${nome}">${ic("stopwatch","me-1")}${ds.length>1?d.rotulo:"Intervalo "+d.rotulo}</button>`
   ).join("")+`</div>`;
+}
+
+/* ---------- diario de treinos, no estilo de app de habito ----------
+   sessao.exFeito guarda os exercicios concluidos hoje, e some com o dia.
+   diario guarda os treinos concluidos por data, e nao some nunca: e ele que
+   alimenta o calendario e a sequencia. */
+const K_DIARIO="treinos-diario";
+let diario=leJSON(K_DIARIO,{});
+
+function chaveData(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function chaveDe(plano,treino,nome){ return plano+"|"+treino+"|"+nome; }
+
+function exConcluido(plano,treino,nome){
+  return !!(sessao.exFeito||{})[chaveDe(plano,treino,nome)];
+}
+
+function marcarExercicio(plano,treino,nome,on){
+  sessao.exFeito=sessao.exFeito||{};
+  const ch=chaveDe(plano,treino,nome);
+  if(on) sessao.exFeito[ch]=true; else delete sessao.exFeito[ch];
+  gravaJSON(K_SESSAO,sessao);
+  sincronizarTreino(plano,treino);
+}
+
+function quantosConcluidos(plano,treino){
+  return PLANOS[plano].treinos[treino].ex
+    .filter(e=>exConcluido(plano,treino,e.n)).length;
+}
+
+function treinoNoDiario(plano,treino,data){
+  return (diario[data||dataHoje()]||[]).some(r=>r.plano===plano&&r.treino===treino);
+}
+
+function registrarTreino(plano,treino){
+  const hoje=dataHoje();
+  if(treinoNoDiario(plano,treino,hoje)) return;
+  const lista=diario[hoje]=diario[hoje]||[];
+  lista.push({plano:plano,treino:treino,nome:PLANOS[plano].nome,
+              exercicios:PLANOS[plano].treinos[treino].ex.length,
+              em:new Date().toISOString()});
+  gravaJSON(K_DIARIO,diario);
+}
+
+function removerTreino(plano,treino){
+  const hoje=dataHoje();
+  const lista=diario[hoje]||[];
+  const i=lista.findIndex(r=>r.plano===plano&&r.treino===treino);
+  if(i<0) return;
+  lista.splice(i,1);
+  if(!lista.length) delete diario[hoje];
+  gravaJSON(K_DIARIO,diario);
+}
+
+/* concluir todos os exercicios fecha o treino sozinho; desfazer um reabre */
+function sincronizarTreino(plano,treino){
+  const total=PLANOS[plano].treinos[treino].ex.length;
+  if(quantosConcluidos(plano,treino)===total) registrarTreino(plano,treino);
+  else removerTreino(plano,treino);
+}
+
+/* ---------- sequencia e contagens ---------- */
+function sequenciaAtual(){
+  const d=new Date();
+  // sem treino hoje ainda, a sequencia conta a partir de ontem, para nao zerar
+  // no meio do dia so porque a pessoa ainda nao treinou
+  if(!diario[chaveData(d)]) d.setDate(d.getDate()-1);
+  let n=0;
+  while(diario[chaveData(d)]){ n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+
+function treinosNoMes(ano,mes){
+  return Object.keys(diario).filter(k=>{
+    const p=k.split("-");
+    return +p[0]===ano && +p[1]===mes+1;
+  }).reduce((n,k)=>n+diario[k].length,0);
+}
+
+function totalDeTreinos(){
+  return Object.values(diario).reduce((n,l)=>n+l.length,0);
+}
+
+/* ---------- resumo na tela inicial ---------- */
+const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho",
+             "agosto","setembro","outubro","novembro","dezembro"];
+
+function blocoResumo(){
+  const seq=sequenciaAtual();
+  const hoje=new Date();
+  const doMes=treinosNoMes(hoje.getFullYear(),hoje.getMonth());
+  const total=totalDeTreinos();
+  const treinouHoje=!!diario[dataHoje()];
+
+  const linha = total
+    ? (seq>1 ? seq+" dias seguidos" : seq===1 ? "1 dia de sequência" : "sequência parada")
+      +" · "+doMes+(doMes===1?" treino":" treinos")+" em "+MESES[hoje.getMonth()]
+    : "Conclua um treino e ele aparece aqui.";
+
+  return '<button type="button" class="exlink card border-0 shadow-sm w-100 mt-4 mb-2" id="verCalendario">'+
+    '<div class="card-body d-flex align-items-center gap-3">'+
+      '<span class="idx badge '+(treinouHoje?"text-bg-success":"text-bg-primary")+' rounded-3 fs-6">'+
+        ic(total?"fire":"calendar3")+'</span>'+
+      '<div class="flex-grow-1 min-w-0">'+
+        '<h2 class="h6 fw-semibold mb-1">'+(treinouHoje?"Treino de hoje concluído":"Seu histórico")+'</h2>'+
+        '<p class="text-body-secondary small mb-0">'+linha+'</p>'+
+      '</div>'+
+      ic("chevron-right","text-body-secondary fs-5")+
+    '</div></button>';
+}
+
+/* ---------- tela de calendario ---------- */
+let calAno=null, calMes=null, calDiaAberto=null;
+
+function abrirCalendario(modo){
+  nivel="calendario"; exAtual=null;
+  historiar({nivel:"calendario"},modo);
+  const hoje=new Date();
+  if(calAno===null){ calAno=hoje.getFullYear(); calMes=hoje.getMonth(); }
+  elVoltar.hidden=false;
+  elRail.hidden=true;
+  elNote.hidden=true;
+  elTitulo.textContent="Calendário";
+  elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
+  elRodape.textContent="Um treino concluído marca o dia.";
+  desenharCalendario();
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+function desenharCalendario(){
+  const hoje=new Date(), hojeCh=chaveData(hoje);
+  const primeiro=new Date(calAno,calMes,1);
+  const dias=new Date(calAno,calMes+1,0).getDate();
+  const recuo=primeiro.getDay();
+  const seq=sequenciaAtual();
+  const doMes=treinosNoMes(calAno,calMes);
+
+  let celulas="";
+  for(let i=0;i<recuo;i++) celulas+='<div class="cal-dia vazio"></div>';
+  for(let d=1;d<=dias;d++){
+    const ch=chaveData(new Date(calAno,calMes,d));
+    const feito=!!diario[ch];
+    const ehHoje=ch===hojeCh;
+    const futuro=ch>hojeCh;
+    celulas+='<button type="button" class="cal-dia'+(feito?" feito":"")+(ehHoje?" hoje":"")+
+      (futuro?" futuro":"")+(calDiaAberto===ch?" aberto":"")+'" data-d="'+ch+'"'+
+      (feito?'':' disabled')+' aria-label="'+d+'">'+d+'</button>';
+  }
+
+  const detalhe=calDiaAberto&&diario[calDiaAberto]
+    ? '<div class="mt-3 p-3 rounded-3 bg-body-tertiary border-start border-3 border-primary-subtle">'+
+      '<p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.68rem">'+
+        calDiaAberto.split("-").reverse().join("/")+'</p>'+
+      '<ul class="list-unstyled mb-0 small">'+
+        diario[calDiaAberto].map(r=>'<li class="d-flex gap-2 mb-1">'+
+          ic("check-circle-fill","text-success")+
+          '<span>'+r.nome+' · treino '+r.treino+'</span></li>').join("")+
+      '</ul></div>'
+    : "";
+
+  elConteudo.innerHTML=
+    '<div class="row g-2 mt-3 mb-3">'+
+      '<div class="col-4"><div class="card border-0 shadow-sm h-100"><div class="card-body text-center py-3">'+
+        '<div class="fs-4 fw-bold lh-1">'+seq+'</div>'+
+        '<div class="text-body-secondary" style="font-size:.7rem">'+(seq===1?"dia seguido":"dias seguidos")+'</div>'+
+      '</div></div></div>'+
+      '<div class="col-4"><div class="card border-0 shadow-sm h-100"><div class="card-body text-center py-3">'+
+        '<div class="fs-4 fw-bold lh-1">'+doMes+'</div>'+
+        '<div class="text-body-secondary" style="font-size:.7rem">no mês</div>'+
+      '</div></div></div>'+
+      '<div class="col-4"><div class="card border-0 shadow-sm h-100"><div class="card-body text-center py-3">'+
+        '<div class="fs-4 fw-bold lh-1">'+totalDeTreinos()+'</div>'+
+        '<div class="text-body-secondary" style="font-size:.7rem">no total</div>'+
+      '</div></div></div>'+
+    '</div>'+
+
+    '<div class="card border-0 shadow-sm mb-3"><div class="card-body">'+
+      '<div class="d-flex align-items-center gap-2 mb-3">'+
+        '<button class="btn btn-sm btn-outline-secondary" type="button" id="calAntes" aria-label="Mês anterior">'+ic("chevron-left")+'</button>'+
+        '<div class="flex-grow-1 text-center fw-semibold">'+MESES[calMes]+' de '+calAno+'</div>'+
+        '<button class="btn btn-sm btn-outline-secondary" type="button" id="calDepois" aria-label="Próximo mês">'+ic("chevron-right")+'</button>'+
+      '</div>'+
+      '<div class="cal cal-cabeca mb-1">'+
+        ["D","S","T","Q","Q","S","S"].map(x=>'<div>'+x+'</div>').join("")+
+      '</div>'+
+      '<div class="cal" id="calGrade">'+celulas+'</div>'+
+      detalhe+
+    '</div></div>';
+
+  document.getElementById("calAntes").addEventListener("click",()=>{
+    calMes--; if(calMes<0){ calMes=11; calAno--; } calDiaAberto=null; desenharCalendario();
+  });
+  document.getElementById("calDepois").addEventListener("click",()=>{
+    calMes++; if(calMes>11){ calMes=0; calAno++; } calDiaAberto=null; desenharCalendario();
+  });
+  elConteudo.querySelectorAll(".cal-dia[data-d]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      calDiaAberto = calDiaAberto===b.dataset.d ? null : b.dataset.d;
+      desenharCalendario();
+    });
+  });
 }
 
 /* ---------- apito ligado / desligado ---------- */
@@ -880,7 +1103,9 @@ function home(){
   elTitulo.textContent="Treinos";
   elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
   elRodape.textContent="Escolha a planilha que você vai usar.";
-  elConteudo.innerHTML='<p class="text-uppercase text-body-secondary fw-semibold tracking mt-4 mb-3" style="font-size:.72rem">Planilhas disponíveis</p>';
+  elConteudo.innerHTML=blocoResumo()+
+    '<p class="text-uppercase text-body-secondary fw-semibold tracking mt-4 mb-3" style="font-size:.72rem">Planilhas disponíveis</p>';
+  document.getElementById("verCalendario").addEventListener("click",()=>abrirCalendario());
 
   Object.keys(PLANOS).forEach(k=>{
     const p=PLANOS[k];
@@ -960,12 +1185,14 @@ function selecionar(t,modo){
   p.treinos[t].ex.forEach((e,idx)=>{
     const feito=sessao.feito[chaveEx(e.n)]||[];
     const prontas=feito.filter(Boolean).length;
+    const concluido=exConcluido(planoAtual,t,e.n);
     const b=document.createElement("button");
     b.type="button";
     b.className="exlink card border-0 shadow-sm w-100 mb-2";
     b.innerHTML=
       '<div class="card-body d-flex align-items-center gap-3 py-3">'+
-        '<span class="idx badge text-bg-primary rounded-3 fs-6">'+(idx+1)+'</span>'+
+        '<span class="idx badge '+(concluido?"text-bg-success":"text-bg-primary")+' rounded-3 fs-6">'+
+          (concluido?ic("check2"):(idx+1))+'</span>'+
         '<div class="flex-grow-1 min-w-0">'+
           '<h3 class="h6 fw-semibold mb-1">'+e.n+'</h3>'+
           '<div class="d-flex flex-wrap gap-2">'+
@@ -1008,6 +1235,7 @@ function abrirExercicio(idx,modo){
   const rotulo=e.n.replace(/"/g,"&quot;");
   const series=expandirSeries(e);
   const aj=ajusteDe(e.n);
+  const concluido=exConcluido(planoAtual,treinoAtual,e.n);
 
   elConteudo.innerHTML=`
     <div class="card border-0 shadow-sm mt-3 mb-3">
@@ -1109,6 +1337,12 @@ function abrirExercicio(idx,modo){
       </div>
     </div>
 
+    <div class="d-grid mb-3">
+      <button class="btn ${concluido?"btn-success":"btn-outline-success"}" type="button" id="exConcluir">
+        ${ic(concluido?"check-circle-fill":"circle","me-2")}${concluido?"Exercício concluído":"Concluir exercício"}
+      </button>
+    </div>
+
     <div class="d-flex gap-2 mb-3">
       <button class="btn btn-outline-secondary btn-sm flex-fill" type="button" id="exAnterior" ${idx===0?"disabled":""}>
         ${ic("chevron-left","me-1")}Anterior
@@ -1172,6 +1406,14 @@ function abrirExercicio(idx,modo){
     abrirExercicio(idx,"replace");
   });
 
+  document.getElementById("exConcluir").addEventListener("click",()=>{
+    const virar=!exConcluido(planoAtual,treinoAtual,e.n);
+    // concluir marca as series que faltavam, para a contagem bater com a tela
+    if(virar) sessao.feito[ch]=series.map(()=>true);
+    marcarExercicio(planoAtual,treinoAtual,e.n,virar);
+    abrirExercicio(idx,"replace");
+  });
+
   const ant=document.getElementById("exAnterior"), prox=document.getElementById("exProximo");
   if(ant&&!ant.disabled) ant.addEventListener("click",()=>abrirExercicio(idx-1,"replace"));
   if(prox&&!prox.disabled) prox.addEventListener("click",()=>abrirExercicio(idx+1,"replace"));
@@ -1225,7 +1467,13 @@ function blocoProgressao(nome){
 
 /* ---------- rodape do treino ---------- */
 function rodapeTreino(){
-  elRodape.innerHTML='Toque no exercício para abrir. O progresso fica salvo até o fim do dia.<br>'+
+  const total=PLANOS[planoAtual].treinos[treinoAtual].ex.length;
+  const prontos=quantosConcluidos(planoAtual,treinoAtual);
+  const fechado=treinoNoDiario(planoAtual,treinoAtual);
+  elRodape.innerHTML=
+    (fechado
+      ? '<span class="badge rounded-pill text-bg-success mb-2">'+ic("check-circle-fill","me-1")+'Treino concluído hoje</span><br>'
+      : '<span class="text-body-secondary">'+prontos+' de '+total+' exercícios concluídos</span><br>')+
     '<button class="btn btn-sm btn-link p-0 mt-1" id="limpar" type="button">Limpar este treino</button>';
   document.getElementById("limpar").addEventListener("click",limparTreino);
 }
@@ -1236,7 +1484,8 @@ function coletarBackup(){
     app:"treinos", versao:1, exportadoEm:new Date().toISOString(),
     sessao:leJSON(K_SESSAO,null),
     historico:leJSON(K_HIST,{}),
-    ajustes:leJSON(K_AJUSTES,{})
+    ajustes:leJSON(K_AJUSTES,{}),
+    diario:leJSON(K_DIARIO,{})
   };
 }
 
@@ -1264,6 +1513,12 @@ function importarBackup(dados){
   });
   gravaJSON(K_HIST,historico);
 
+  // dias do backup entram sem apagar os que ja existem aqui
+  if(dados.diario&&typeof dados.diario==="object"){
+    Object.keys(dados.diario).forEach(d=>{ if(!diario[d]) diario[d]=dados.diario[d]; });
+    gravaJSON(K_DIARIO,diario);
+  }
+
   // ajustes do backup nao sobrescrevem os daqui, que sao mais recentes
   if(dados.ajustes&&typeof dados.ajustes==="object"){
     Object.keys(dados.ajustes).forEach(ch=>{ if(!ajustes[ch]) ajustes[ch]=dados.ajustes[ch]; });
@@ -1283,8 +1538,10 @@ function limparODia(){
   if(!marcas && !cargas) return;
   if(!confirm("Isso apaga as marcações e as cargas digitadas hoje, em todas as planilhas. "+
               "O histórico dos treinos anteriores não é tocado. Continuar?")) return;
-  sessao={dia:dataHoje(),feito:{},carga:{}};
+  sessao={dia:dataHoje(),feito:{},carga:{},exFeito:{}};
   gravaJSON(K_SESSAO,sessao);
+  delete diario[dataHoje()];
+  gravaJSON(K_DIARIO,diario);
   home();
 }
 
@@ -1360,7 +1617,9 @@ window.addEventListener("popstate",ev=>{
   const e=ev.state||{nivel:"home"};
   restaurando=true;
   try{
-    if(e.nivel!=="home" && PLANOS[e.plano] && PLANOS[e.plano].treinos[e.treino]){
+    if(e.nivel==="calendario"){
+      abrirCalendario();
+    }else if(e.nivel!=="home" && PLANOS[e.plano] && PLANOS[e.plano].treinos[e.treino]){
       abrirPlano(e.plano);
       selecionar(e.treino);
       if(e.nivel==="exercicio" && PLANOS[e.plano].treinos[e.treino].ex[e.ex]) abrirExercicio(e.ex);

@@ -9,9 +9,12 @@ o treino do dia; se hoje for descanso, avisa e deixa você escolher outro.
 
 ```
 Planilhas  ──▶  Treino A–E  ──▶  Exercício
-           ◀──             ◀──
-              Voltar          Voltar
+    │      ◀──             ◀──
+    └──▶  Calendário
 ```
+
+Funciona como app de hábito: você conclui os exercícios, o treino fecha
+sozinho quando todos estão feitos, e o dia acende no calendário.
 
 ---
 
@@ -80,7 +83,7 @@ com a mesma necessidade só precisa da marca.
 > exercício contraindicado dentro do painel de substituições. As checagens
 > existem justamente para esse erro não passar calado.
 
-## As três telas
+## As telas
 
 O botão **Voltar**, no topo, sempre desce um nível: do exercício para o treino,
 do treino para as planilhas. O **gesto de voltar do iOS** faz o mesmo — as duas
@@ -93,6 +96,9 @@ você não perde o lugar no meio do treino.
 
 A tela inicial. Cada planilha mostra nome, resumo, frequência e quais treinos
 tem.
+
+No topo, um cartão mostra a **sequência de dias** e quantos treinos você fez
+no mês. Tocar nele abre o calendário.
 
 No fim, **Limpar tudo de hoje** zera as marcações e cargas do dia em todas as
 planilhas de uma vez — útil quando você começou o treino errado ou quer
@@ -137,10 +143,31 @@ aberto.
   exercício, para quando o aparelho estiver em uso. Cada substituição tem os
   próprios atalhos de Instagram e YouTube.
 - **Instagram / YouTube** — busca a execução daquele exercício.
+- **Concluir exercício** — o check verde. Marca todas as séries que faltavam
+  e pinta o exercício de verde na lista. Tocar de novo desfaz.
 - **Anterior / Próximo** — anda pelo treino sem voltar para a lista.
 
-No topo, o **botão de som** desliga o apito do cronômetro e o **de tema**
-alterna claro e escuro. As duas escolhas ficam guardadas.
+### 4. Calendário
+
+Chega pelo cartão no topo da tela inicial. Veja
+[Calendário e sequência](#calendário-e-sequência).
+
+No topo de todas as telas, o **botão de som** desliga o apito do cronômetro e o
+**de tema** alterna claro e escuro. As duas escolhas ficam guardadas.
+
+## Calendário e sequência
+
+Concluir **todos** os exercícios de um treino marca o dia no calendário. Não há
+botão de "concluir treino": o treino fecha sozinho quando o último exercício é
+concluído, e reabre se você desfizer algum.
+
+A tela do calendário mostra três números — **dias seguidos**, **treinos no mês**
+e **total** — e a grade do mês, com os dias treinados preenchidos. Tocar num dia
+marcado mostra quais treinos foram feitos nele. As setas andam pelos meses.
+
+A sequência conta os dias seguidos até hoje. Se você ainda não treinou hoje ela
+conta a partir de ontem, para não zerar no meio do dia só porque você ainda não
+foi à academia.
 
 ## Sobre o cronômetro
 
@@ -169,6 +196,10 @@ Duas chaves no `localStorage`, só no aparelho — nada vai para servidor nenhum
 | `treinos-sessao` | o dia de hoje, o que foi marcado e as cargas digitadas |
 | `treinos-historico` | as últimas 8 sessões de cada exercício |
 | `treinos-ajustes` | séries, repetições e descanso alterados por você |
+| `treinos-diario` | os treinos concluídos em cada data |
+
+`treinos-diario` é o que alimenta o calendário e a sequência. Diferente da
+sessão, ele nunca expira — "Limpar tudo de hoje" só apaga o dia de hoje.
 
 `treinos-ajustes` é indexado por `plano\|treino\|exercício` e **não expira com o
 dia**: um ajuste vale até você desfazer. Ele altera só a prescrição na tela;
@@ -343,6 +374,7 @@ histórico do navegador: o estado vive em três variáveis.
 | `abrirPlano(chave)` | abas dos dias, e chama `selecionar()` | `"treino"` |
 | `selecionar(treino)` | lista de exercícios do treino | `"treino"` |
 | `abrirExercicio(indice)` | a página do exercício | `"exercicio"` |
+| `abrirCalendario()` | o calendário e os números | `"calendario"` |
 
 - `nivel` diz em qual tela estamos.
 - `planoAtual`, `treinoAtual` e `exAtual` dizem o quê está aberto. Os dois
