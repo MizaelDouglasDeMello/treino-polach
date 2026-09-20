@@ -83,8 +83,11 @@ com a mesma necessidade só precisa da marca.
 ## As três telas
 
 O botão **Voltar**, no topo, sempre desce um nível: do exercício para o treino,
-do treino para as planilhas. Voltando de um exercício, a lista reaparece na
-mesma altura em que estava — você não perde o lugar no meio do treino.
+do treino para as planilhas. O **gesto de voltar do iOS** faz o mesmo — as duas
+formas passam pelo mesmo caminho.
+
+Voltando de um exercício, a lista reaparece na mesma altura em que estava —
+você não perde o lugar no meio do treino.
 
 ### 1. Planilhas
 
@@ -309,16 +312,33 @@ histórico do navegador: o estado vive em três variáveis.
 | `selecionar(treino)` | lista de exercícios do treino | `"treino"` |
 | `abrirExercicio(indice)` | a página do exercício | `"exercicio"` |
 
-- `nivel` diz em qual tela estamos, e é o que faz o botão Voltar escolher entre
-  `selecionar(treinoAtual)` e `home()`.
+- `nivel` diz em qual tela estamos.
 - `planoAtual`, `treinoAtual` e `exAtual` dizem o quê está aberto. Os dois
   primeiros formam a chave do progresso (`plano|treino|exercício`).
 - `voltandoPara` guarda a rolagem ao sair de um exercício, e `selecionar()` a
   consome para reposicionar a lista.
 
-> O botão Voltar da tela do exercício é o **único** caminho de volta para a
-> lista. Como não há histórico de navegador, o gesto de voltar do iOS sai do
-> app em vez de subir um nível.
+### Histórico e o gesto de voltar
+
+Cada tela vira uma entrada no histórico, e é isso que faz o gesto do iOS subir
+um nível em vez de sair do app.
+
+- `historiar(estado, modo)` empilha o estado. Com `modo:"replace"` ele
+  **substitui** em vez de empilhar — é o que usam trocar de dia e os botões
+  Anterior/Próximo, que são movimento lateral e não merecem entrada própria.
+  Resultado: voltar de qualquer exercício cai na lista, não no exercício
+  anterior que você espiou.
+- O botão Voltar chama `history.back()`. Assim ele e o gesto do iOS percorrem
+  exatamente o mesmo caminho, e não existem dois jeitos de voltar que possam
+  divergir.
+- O `popstate` remonta a tela a partir do estado, com a flag `restaurando`
+  ligada para as funções não empilharem de novo o que acabaram de restaurar.
+- `history.scrollRestoration` fica em `"manual"`. A restauração automática do
+  navegador não serve aqui: quando ela roda, o `popstate` ainda não remontou a
+  lista, então não há o que rolar. `voltandoPara` é a única fonte.
+
+> A URL nunca muda — o estado vai em `history.state`. Recarregar a página cai
+> na tela inicial, e não existe link para um treino ou exercício específico.
 
 ---
 

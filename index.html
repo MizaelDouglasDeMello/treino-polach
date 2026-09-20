@@ -566,6 +566,23 @@ const elRodape=document.getElementById("rodape");
 let planoAtual=null, treinoAtual=null, exAtual=null;
 let nivel="home";          // home | treino | exercicio
 let voltandoPara=0;        // rolagem a recuperar ao sair de um exercicio
+let restaurando=false;     // true enquanto o popstate remonta a tela
+
+/* Cada tela vira uma entrada no historico, para o gesto de voltar do iOS subir
+   um nivel em vez de sair do app. A URL nao muda: o estado vai no proprio
+   history.state, entao recarregar continua caindo na home.
+   modo "replace" para movimento lateral (trocar de dia, andar entre
+   exercicios), que nao merece uma entrada nova. */
+/* O navegador restaura rolagem sozinho no popstate, mas aqui o conteudo e
+   remontado depois do evento: quando ele tenta, a lista ainda nem existe. Melhor
+   assumir o controle e deixar voltandoPara como unica fonte. */
+if("scrollRestoration" in history) history.scrollRestoration="manual";
+
+function historiar(estado,modo){
+  if(restaurando) return;
+  if(!history.state || modo==="replace") history.replaceState(estado,"");
+  else history.pushState(estado,"");
+}
 
 /* ---------- progresso do dia e historico de carga ----------
    sessao: o que foi marcado e a carga usada hoje, por plano|treino|exercicio.
@@ -623,7 +640,7 @@ function limparTreino(){
     Object.keys(obj).forEach(k=>{ if(k.indexOf(pref)===0) delete obj[k]; });
   });
   gravaJSON(K_SESSAO,sessao);
-  selecionar(treinoAtual);
+  selecionar(treinoAtual,"replace");
 }
 
 /* ---------- cronometro de intervalo ---------- */
@@ -799,6 +816,7 @@ elTema.addEventListener("click",()=>{
 /* ---------- home ---------- */
 function home(){
   planoAtual=null; nivel="home"; exAtual=null; voltandoPara=0;
+  historiar({nivel:"home"});
   elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
   elTitulo.textContent="Treinos";
   elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
@@ -828,7 +846,7 @@ function home(){
 
   elConteudo.insertAdjacentHTML("beforeend",blocoBackup());
   ligarBackup();
-  window.scrollTo({top:0});
+  window.scrollTo({top:0,behavior:"instant"});
 }
 
 /* ---------- abre uma planilha ---------- */
@@ -845,7 +863,7 @@ function abrirPlano(k){
     b.className="dia btn btn-outline-secondary flex-shrink-0";
     b.innerHTML='<span class="d-block fw-bold fs-5 lh-1">'+t+'</span>'+
                 '<span class="d-block text-uppercase tracking opacity-75" style="font-size:.62rem">'+p.treinos[t].dia+'</span>';
-    b.addEventListener("click",()=>selecionar(t));
+    b.addEventListener("click",()=>selecionar(t,"replace"));
     elRail.appendChild(b);
   });
 
@@ -861,8 +879,9 @@ function abrirPlano(k){
 
 /* ---------- monta um treino ---------- */
 /* ---------- lista de exercicios do treino ---------- */
-function selecionar(t){
+function selecionar(t,modo){
   treinoAtual=t; nivel="treino"; exAtual=null;
+  historiar({nivel:"treino",plano:planoAtual,treino:t},modo);
   const p=PLANOS[planoAtual];
   elTitulo.textContent=p.nome;
   elRail.hidden=false;
@@ -900,14 +919,17 @@ function selecionar(t){
     elConteudo.appendChild(b);
   });
 
-  window.scrollTo({top:voltandoPara});
+  window.scrollTo({top:voltandoPara,behavior:"instant"});
   voltandoPara=0;
 }
 
 /* ---------- pagina de um exercicio ---------- */
-function abrirExercicio(idx){
+function abrirExercicio(idx,modo){
   const p=PLANOS[planoAtual], lista=p.treinos[treinoAtual].ex, e=lista[idx];
+  // so ao sair da lista: vindo de outro exercicio, a rolagem e a da pagina dele
+  if(nivel==="treino") voltandoPara=window.scrollY;
   nivel="exercicio"; exAtual=idx;
+  historiar({nivel:"exercicio",plano:planoAtual,treino:treinoAtual,ex:idx},modo);
 
   elTitulo.textContent=e.n;
   elRail.hidden=true;
@@ -1033,10 +1055,10 @@ function abrirExercicio(idx){
   }
 
   const ant=document.getElementById("exAnterior"), prox=document.getElementById("exProximo");
-  if(ant&&!ant.disabled) ant.addEventListener("click",()=>abrirExercicio(idx-1));
-  if(prox&&!prox.disabled) prox.addEventListener("click",()=>abrirExercicio(idx+1));
+  if(ant&&!ant.disabled) ant.addEventListener("click",()=>abrirExercicio(idx-1,"replace"));
+  if(prox&&!prox.disabled) prox.addEventListener("click",()=>abrirExercicio(idx+1,"replace"));
 
-  window.scrollTo({top:0});
+  window.scrollTo({top:0,behavior:"instant"});
 }
 
 /* ---------- progressao de carga ---------- */
@@ -1177,9 +1199,27 @@ if("serviceWorker" in navigator && location.protocol!=="file:"){
 }
 
 elVoltar.innerHTML=ic("chevron-left","me-1")+"Voltar";
+/* O botao Voltar delega ao historico, entao ele e o gesto do iOS percorrem o
+   mesmo caminho. Sem entrada anterior (app aberto direto num nivel), cai no
+   passo a passo manual. */
 elVoltar.addEventListener("click",()=>{
-  if(nivel==="exercicio"){ voltandoPara=window.scrollY; selecionar(treinoAtual); }
+  if(history.state && history.state.nivel!=="home") history.back();
+  else if(nivel==="exercicio") selecionar(treinoAtual,"replace");
   else home();
+});
+
+window.addEventListener("popstate",ev=>{
+  const e=ev.state||{nivel:"home"};
+  restaurando=true;
+  try{
+    if(e.nivel!=="home" && PLANOS[e.plano] && PLANOS[e.plano].treinos[e.treino]){
+      abrirPlano(e.plano);
+      selecionar(e.treino);
+      if(e.nivel==="exercicio" && PLANOS[e.plano].treinos[e.treino].ex[e.ex]) abrirExercicio(e.ex);
+    }else{
+      home();
+    }
+  }finally{ restaurando=false; }
 });
 home();
 </script>
