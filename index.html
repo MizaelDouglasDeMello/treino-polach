@@ -692,7 +692,31 @@ function bip(){
   }catch(err){}
 }
 
+/* Mantem a tela acesa durante o descanso, que e quando ninguem toca no celular
+   e ele apaga bem na hora de olhar quanto falta. So durante a contagem: segurar
+   o treino inteiro gastaria bateria a toa. iOS 16.4 em diante; onde nao existe,
+   nada acontece. */
+let travaTela=null;
+
+async function segurarTela(){
+  try{
+    if(!("wakeLock" in navigator) || travaTela) return;
+    travaTela=await navigator.wakeLock.request("screen");
+    travaTela.addEventListener("release",()=>{ travaTela=null; });
+  }catch(err){ travaTela=null; }   // aba oculta, bateria baixa, navegador sem suporte
+}
+
+async function soltarTela(){
+  try{ if(travaTela) await travaTela.release(); }catch(err){}
+  travaTela=null;
+}
+
 let cronoFim=0, cronoTotal=0, cronoTick=null, cronoSumir=null;
+
+// o sistema solta a trava sozinho quando o app sai da frente; retoma se o descanso continua
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible" && cronoTick) segurarTela();
+});
 
 function mmss(s){
   s=Math.max(0,s);
@@ -724,6 +748,7 @@ function iniciarCrono(seg,nome){
   elCronoTempo.classList.remove("text-success");
   elCronoBarra.classList.remove("bg-success");
   elCrono.hidden=false; document.body.classList.add("com-crono");
+  segurarTela();
   cronoTick=setInterval(passoCrono,200);
   passoCrono();
 }
@@ -732,6 +757,7 @@ function pararCrono(){
   clearTimeout(cronoSumir);
   if(cronoTick) clearInterval(cronoTick);
   cronoTick=null;
+  soltarTela();
   elCrono.hidden=true;
   document.body.classList.remove("com-crono");
 }
@@ -745,6 +771,7 @@ elCronoMais.addEventListener("click",()=>{
   elCronoTempo.classList.remove("text-success");
   elCronoBarra.classList.remove("bg-success");
   if(!cronoTick) cronoTick=setInterval(passoCrono,200);
+  segurarTela();
   passoCrono();
 });
 
