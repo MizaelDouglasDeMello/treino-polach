@@ -3,113 +3,230 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#15171B">
+<meta name="theme-color" content="#0E1014">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treinos">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
 <title>Treinos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#15171B; --surface:#1C1F24; --line:#2C313A;
-    --text:#E9E6DF; --muted:#8A9099;
-    --brass:#D2A63C; --rust:#C2603F; --radius:4px;
+    --bg:#0E1014;
+    --bg-elev:#141821;
+    --surface:#181D26;
+    --surface-2:#1E242F;
+    --line:#2B323D;
+    --line-soft:#232935;
+    --text:#F2EFE8;
+    --muted:#8C94A1;
+    --brass:#E3B855;
+    --brass-2:#CFA340;
+    --rust:#DD7450;
+    --ink:#171206;
+    --r:14px; --r-sm:10px; --pill:999px;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px -14px rgba(0,0,0,.7);
   }
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--bg)}
   html,body{margin:0;padding:0}
   body{
-    background:var(--bg);color:var(--text);
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;
-    padding-bottom:48px;
+    background:
+      radial-gradient(130% 55% at 50% 0%, rgba(227,184,85,.08) 0%, rgba(227,184,85,0) 62%),
+      var(--bg);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    font-size:16px;line-height:1.45;
+    -webkit-text-size-adjust:100%;text-size-adjust:100%;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:none;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom));
   }
-  h1,h2,h3,b{font-family:"Archivo",system-ui,sans-serif}
+  h1,h2,h3,b{font-family:"Archivo",-apple-system,system-ui,sans-serif}
   [hidden]{display:none !important}
+  button,a{touch-action:manipulation}
+  button{-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none}
 
   header{
-    position:sticky;top:0;z-index:10;background:var(--bg);
-    border-bottom:1px solid var(--line);padding:env(safe-area-inset-top) 0 0;
+    position:sticky;top:0;z-index:10;
+    background:rgba(14,16,20,.82);
+    -webkit-backdrop-filter:saturate(180%) blur(18px);
+    backdrop-filter:saturate(180%) blur(18px);
+    border-bottom:1px solid var(--line-soft);
+    padding-top:env(safe-area-inset-top);
   }
-  .brand{display:flex;align-items:center;gap:12px;padding:14px 16px 10px}
-  .brand h1{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0;flex:1}
-  .brand .tag{color:var(--muted);font-size:13px}
+  .brand{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;max-width:600px;margin:0 auto}
+  .brand h1{
+    font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0;
+    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .tag{
+    flex:0 0 auto;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);border-radius:var(--pill);padding:5px 10px;
+  }
+  .tag:empty{display:none}
+  .tag[data-on="true"]{
+    color:var(--brass);border-color:rgba(227,184,85,.4);background:rgba(227,184,85,.1);
+  }
   .back{
-    background:transparent;border:1px solid var(--line);border-radius:var(--radius);
-    color:var(--text);font:inherit;font-size:14px;padding:6px 11px;cursor:pointer;
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--pill);
+    color:var(--text);font:inherit;font-size:14px;font-weight:500;
+    padding:8px 14px 8px 10px;cursor:pointer;
+    transition:transform .12s ease,background .16s ease;
   }
+  .back svg{width:16px;height:16px}
+  .back:active{transform:scale(.96);background:var(--surface-2)}
   .back:focus-visible,.day:focus-visible,.set:focus-visible,.btn:focus-visible,.plano:focus-visible{
     outline:2px solid var(--brass);outline-offset:2px;
   }
 
-  .rail{display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
+  .rail{
+    display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+    max-width:600px;margin:0 auto;
+  }
   .rail::-webkit-scrollbar{display:none}
   .day{
-    flex:1 0 auto;min-width:62px;background:var(--surface);
-    border:1px solid var(--line);border-radius:var(--radius);
-    color:var(--muted);padding:8px 6px 7px;font:inherit;text-align:center;cursor:pointer;
+    flex:1 0 auto;min-width:68px;scroll-snap-align:center;
+    background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+    color:var(--muted);padding:9px 8px 8px;font:inherit;text-align:center;cursor:pointer;
+    transition:transform .12s ease,background .16s ease,border-color .16s ease;
   }
-  .day b{display:block;font-size:19px;font-weight:800;color:var(--text)}
-  .day small{font-size:11px;letter-spacing:.04em}
-  .day[aria-selected="true"]{background:var(--brass);border-color:var(--brass);color:#2A2205}
-  .day[aria-selected="true"] b{color:#221B04}
+  .day b{display:block;font-size:19px;font-weight:800;color:var(--text);line-height:1.15}
+  .day small{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+  .day:active{transform:scale(.96)}
+  .day[aria-selected="true"]{
+    background:linear-gradient(180deg,var(--brass) 0%,var(--brass-2) 100%);
+    border-color:var(--brass);color:rgba(23,18,6,.72);
+    box-shadow:0 5px 16px -8px rgba(227,184,85,.75);
+  }
+  .day[aria-selected="true"] b{color:var(--ink)}
 
-  main{padding:0 16px}
-  .intro{color:var(--muted);font-size:14px;margin:18px 0 6px}
+  main{padding:0 16px;max-width:600px;margin:0 auto}
+  .intro{
+    color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+    margin:22px 0 12px;
+  }
 
   .plano{
-    display:block;width:100%;text-align:left;cursor:pointer;
-    background:transparent;border:0;border-bottom:1px solid var(--line);
-    border-left:3px solid var(--brass);
-    padding:18px 0 18px 14px;margin:0;font:inherit;color:var(--text);
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
+    background:linear-gradient(180deg,var(--surface) 0%,var(--bg-elev) 100%);
+    border:1px solid var(--line-soft);border-radius:var(--r);
+    padding:18px 16px 18px 20px;margin:0 0 12px;font:inherit;color:var(--text);
+    position:relative;overflow:hidden;box-shadow:var(--shadow);
+    transition:transform .12s ease,border-color .16s ease;
   }
-  .plano h2{font-size:19px;font-weight:600;margin:0}
+  .plano::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--brass),var(--rust));
+  }
+  .plano:active{transform:scale(.985);border-color:var(--line)}
+  .plano-txt{flex:1;min-width:0}
+  .plano h2{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.25}
   .plano p{margin:5px 0 0;color:var(--muted);font-size:14px}
+  .chip{
+    display:inline-block;margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.05em;
+    color:var(--brass);background:rgba(227,184,85,.1);border:1px solid rgba(227,184,85,.25);
+    border-radius:var(--pill);padding:4px 10px;
+  }
+  .chev{width:20px;height:20px;color:var(--muted);flex:0 0 auto}
 
-  .today-note{color:var(--muted);font-size:13px;padding:12px 0 0;margin:0}
-  .ex{border-bottom:1px solid var(--line);padding:20px 0 18px}
+  .today-note{
+    color:var(--muted);font-size:13px;margin:16px 0 0;padding:12px 14px;
+    background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+  }
+
+  .ex{
+    background:linear-gradient(180deg,var(--surface) 0%,var(--bg-elev) 100%);
+    border:1px solid var(--line-soft);border-radius:var(--r);
+    padding:16px;margin:12px 0 0;box-shadow:var(--shadow);
+  }
+  .ex:first-child{margin-top:18px}
   .ex-head{display:flex;gap:12px;align-items:flex-start}
   .idx{
-    flex:0 0 26px;height:26px;margin-top:2px;display:grid;place-items:center;
-    border:1px solid var(--brass);color:var(--brass);
-    font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;border-radius:var(--radius);
+    flex:0 0 28px;height:28px;display:grid;place-items:center;
+    background:rgba(227,184,85,.12);border:1px solid rgba(227,184,85,.3);color:var(--brass);
+    font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;border-radius:9px;
   }
-  .ex h3{font-size:18px;font-weight:600;line-height:1.25;margin:0}
-  .tech{opacity:.75;font-size:14px;margin:6px 0 0}
-  .rest{color:var(--brass);font-size:13px;margin:4px 0 0}
+  .ex h3{font-size:17px;font-weight:700;line-height:1.3;margin:0;letter-spacing:-.01em}
+  .tech{color:var(--muted);font-size:13.5px;margin:7px 0 0;line-height:1.4}
+  .rest{
+    display:inline-flex;align-items:center;gap:5px;
+    color:var(--brass);font-size:12px;font-weight:700;letter-spacing:.02em;margin:9px 0 0;
+  }
+  .rest svg{width:13px;height:13px;flex:0 0 auto}
 
-  .sets{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0 38px}
+  .sets{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
   .set{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    color:var(--text);font:inherit;font-size:13px;padding:7px 10px;cursor:pointer;
+    flex:1 1 auto;min-height:42px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);
+    color:var(--text);font:inherit;font-size:13px;font-weight:700;padding:8px 12px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    transition:transform .12s ease,background .16s ease,color .16s ease,border-color .16s ease;
   }
+  .set:active{transform:scale(.96)}
   .set[aria-pressed="true"]{
-    background:transparent;border-color:var(--brass);color:var(--brass);
-    text-decoration:line-through;text-decoration-color:var(--brass);
+    background:linear-gradient(180deg,var(--brass) 0%,var(--brass-2) 100%);
+    border-color:var(--brass);color:var(--ink);
+    box-shadow:0 5px 14px -8px rgba(227,184,85,.8);
   }
+  .set[aria-pressed="true"]::before{content:"✓";font-weight:800;font-size:12px}
 
-  .actions{display:flex;gap:6px;margin:12px 0 0 38px;flex-wrap:wrap}
+  .actions{display:flex;gap:8px;margin:12px 0 0;flex-wrap:wrap}
   .btn{
-    background:transparent;border:1px solid var(--line);border-radius:var(--radius);
-    color:var(--text);font:inherit;font-size:13px;padding:8px 11px;cursor:pointer;
-    display:inline-flex;align-items:center;gap:7px;text-decoration:none;
+    flex:1 1 auto;min-height:44px;
+    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);
+    color:var(--text);font:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;
+    transition:transform .12s ease,background .16s ease,border-color .16s ease;
   }
-  .btn.swap{border-color:var(--rust);color:var(--rust)}
-  .btn.swap[aria-expanded="true"]{background:var(--rust);color:#1A0D09}
-  .btn svg{width:15px;height:15px;flex:0 0 auto}
+  .btn:active{transform:scale(.96)}
+  .btn.swap{
+    flex:1 1 100%;
+    background:rgba(221,116,80,.08);border-color:rgba(221,116,80,.45);color:var(--rust);
+  }
+  .btn.swap[aria-expanded="true"]{background:var(--rust);border-color:var(--rust);color:#1B0C06}
+  .btn svg{width:16px;height:16px;flex:0 0 auto}
 
-  .subs{margin:10px 0 0 38px;padding:12px 14px;background:var(--surface);border-left:2px solid var(--rust)}
-  .subs p{margin:0 0 8px;font-size:12px;color:var(--muted)}
-  .subs ul{margin:0;padding-left:18px}
-  .subs li{margin:0 0 5px;font-size:14px}
+  .subs{
+    margin:10px 0 0;padding:14px;background:var(--bg);
+    border:1px solid var(--line-soft);border-left:3px solid var(--rust);border-radius:var(--r-sm);
+    animation:surge .18s ease;
+  }
+  @keyframes surge{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .subs p{
+    margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .subs ul{margin:0;padding:0;list-style:none}
+  .subs li{position:relative;padding-left:17px;margin:0 0 9px;font-size:14px;line-height:1.35}
+  .subs li::before{
+    content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;
+    background:var(--rust);
+  }
   .subs li:last-child{margin:0}
 
-  footer{padding:24px 16px;color:var(--muted);font-size:12px}
+  footer{
+    padding:28px 16px calc(8px + env(safe-area-inset-bottom));
+    color:var(--muted);font-size:12px;text-align:center;line-height:1.5;
+    max-width:600px;margin:0 auto;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="brand">
-    <button class="back" id="voltar" type="button" hidden>Voltar</button>
+    <button class="back" id="voltar" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Voltar</button>
     <h1 id="titulo">Treinos</h1>
     <span class="tag" id="tag"></span>
   </div>
@@ -350,6 +467,7 @@ const elRodape=document.getElementById("rodape");
 let planoAtual=null;
 
 function icone(tipo){
+  if(tipo==="t") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>';
   if(tipo==="ig") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>';
 }
@@ -357,7 +475,7 @@ function icone(tipo){
 function home(){
   planoAtual=null;
   elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
-  elTitulo.textContent="Treinos"; elTag.textContent="";
+  elTitulo.textContent="Treinos"; elTag.textContent=""; delete elTag.dataset.on;
   elRodape.textContent="Escolha a planilha que você vai usar.";
   elConteudo.innerHTML='<p class="intro">Quatro planilhas disponíveis.</p>';
   Object.keys(PLANOS).forEach(k=>{
@@ -366,7 +484,9 @@ function home(){
     const b=document.createElement("button");
     b.className="plano"; b.type="button";
     const rotulo=/^\d+$/.test(letras[0])?"Dias":"Treinos";
-    b.innerHTML=`<h2>${p.nome}</h2><p>${p.resumo}</p><p>${rotulo} ${letras.join(", ")}</p>`;
+    b.innerHTML=`<div class="plano-txt"><h2>${p.nome}</h2><p>${p.resumo}</p>`+
+      `<span class="chip">${rotulo} ${letras.join(", ")}</span></div>`+
+      `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>`;
     b.addEventListener("click",()=>abrirPlano(k));
     elConteudo.appendChild(b);
   });
@@ -391,7 +511,7 @@ function abrirPlano(k){
 
   const hoje=new Date().getDay();
   const doDia=p.semana[hoje];
-  elTag.textContent=doDia?"hoje":"descanso";
+  elTag.textContent=doDia?"hoje":"descanso"; elTag.dataset.on=String(!!doDia);
   elNote.hidden=!!doDia;
   if(!doDia) elNote.textContent="Nesta planilha, hoje é descanso. Escolha um treino acima se quiser adiantar.";
 
@@ -413,7 +533,7 @@ function selecionar(t){
         <div>
           <h3>${e.n}</h3>
           ${e.t!=="—"?`<p class="tech">${e.t}</p>`:""}
-          ${e.i!=="—"?`<p class="rest">Intervalo: ${e.i}</p>`:""}
+          ${e.i!=="—"?`<p class="rest">${icone("t")}Intervalo ${e.i}</p>`:""}
         </div>
       </div>
       <div class="sets">${e.s.map(s=>`<button class="set" type="button" aria-pressed="false">${s}</button>`).join("")}</div>
