@@ -76,23 +76,35 @@ com a mesma necessidade só precisa da marca.
 
 ## O que dá para fazer
 
+São três telas: a lista de planilhas, a lista de exercícios do treino e a
+página de um exercício.
+
+**Na lista do treino**, cada exercício mostra nome, séries, intervalo e quanto
+já foi feito — o treino inteiro cabe numa tela. Toque para abrir.
+
+**Na página do exercício** fica tudo que você usa enquanto treina:
+
 - **Marcar série feita** — toque na série e ela fica preenchida. Fica salvo
   até o fim do dia, então trocar de treino, fechar o app ou recarregar não
-  perde nada. "Limpar este treino", no rodapé, zera só o treino aberto.
-- **Anotar a carga** — campo ao lado de cada série. Acima dos exercícios
-  aparece a última vez que você registrou aquele movimento:
-  `Última vez: 82,5 kg · 19/09`. É o que responde se a progressão de carga
-  que as planilhas pedem está acontecendo.
+  perde nada. "Limpar este treino", no rodapé da lista, zera só o treino
+  aberto.
+- **Anotar a carga** — campo ao lado de cada série.
+- **Progressão de carga** — o histórico daquele movimento, com barra por
+  sessão e um aviso comparando com a vez anterior: *subiu 5 kg*, *manteve a
+  carga*, *caiu 2,5 kg*. É o que responde se a progressão que as planilhas
+  pedem está acontecendo.
 - **Cronômetro de intervalo** — toque na ficha do intervalo e a contagem
   aparece numa barra no rodapé, que fica visível enquanto você rola a tela.
   Tem `+30s` e botão de parar. Ao zerar, mostra "Pode ir", apita e some
-  sozinha depois de 10 s.
+  sozinha depois de 10 s. **A tela não apaga durante o descanso.**
 - **Máquina ocupada** — abre substituições que mantêm o mesmo estímulo do
   exercício, para quando o aparelho estiver em uso. Cada substituição tem os
   próprios atalhos de Instagram e YouTube.
 - **Instagram / YouTube** — busca a execução daquele exercício.
-- **Botão de som** — no topo, desliga o apito do cronômetro. A escolha fica
-  guardada.
+- **Anterior / Próximo** — anda pelo treino sem voltar para a lista.
+
+No topo, o **botão de som** desliga o apito do cronômetro e o **de tema**
+alterna claro e escuro. As duas escolhas ficam guardadas.
 
 ### Sobre o cronômetro
 
@@ -102,6 +114,10 @@ dois intervalos (`30 s / 90 s`) ganha uma ficha para cada.
 
 A contagem usa o relógio do sistema em vez de ir descontando, então continua
 certa se o iPhone congelar o timer com a tela apagada.
+
+A tela fica acesa enquanto a contagem roda (`Wake Lock`, iOS 16.4+) e a trava
+é solta assim que ela termina — segurar o treino inteiro gastaria bateria à
+toa. Onde o navegador não concede a trava, o resto continua funcionando igual.
 
 > **O apito não toca com o iPhone no silencioso.** O Safari respeita a chave
 > lateral de mudo, e não há como contornar isso pela página. A vibração
