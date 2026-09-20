@@ -46,6 +46,12 @@
   .tracking{letter-spacing:.08em}
   .bi{width:1em;height:1em;vertical-align:-.125em;flex:0 0 auto}
 
+  /* series e carga, lado a lado em uma linha por serie */
+  .serie{display:flex;gap:.5rem}
+  .serie .set{flex:1 1 auto}
+  /* largura fixa: input solto tem largura natural de ~20 caracteres e quebra o flex */
+  .carga{flex:0 0 84px;width:84px;font-size:16px;padding:.25rem .4rem}  /* <16px faz o iOS dar zoom ao focar */
+
   /* cronometro de intervalo */
   .crono{min-height:36px}
   #cronometro{padding-bottom:env(safe-area-inset-bottom)}
@@ -550,7 +556,66 @@ const elNote=document.getElementById("note");
 const elConteudo=document.getElementById("conteudo");
 const elRodape=document.getElementById("rodape");
 
-let planoAtual=null;
+let planoAtual=null, treinoAtual=null;
+
+/* ---------- progresso do dia e historico de carga ----------
+   sessao: o que foi marcado e a carga usada hoje, por plano|treino|exercicio.
+   historico: as ultimas 8 sessoes de cada exercicio, indexadas pelo nome, porque
+   a carga do supino e a mesma esteja ele em que planilha estiver.
+   Virou o dia: o que ficou na sessao vai para o historico e o dia comeca limpo. */
+const K_SESSAO="treinos-sessao", K_HIST="treinos-historico";
+
+function leJSON(k,padrao){
+  try{ const v=localStorage.getItem(k); return v?JSON.parse(v):padrao; }catch(err){ return padrao; }
+}
+function gravaJSON(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(err){} }
+
+function dataHoje(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+let historico=leJSON(K_HIST,{});
+let sessao=leJSON(K_SESSAO,null);
+
+function arquivarSessao(s){
+  if(!s||!s.dia||!s.carga) return;
+  Object.keys(s.carga).forEach(ch=>{
+    const cargas=s.carga[ch]||[];
+    if(!cargas.some(c=>c)) return;                 // nada digitado, nao vale registro
+    const nome=ch.split("|").slice(2).join("|");
+    const lista=historico[nome]=historico[nome]||[];
+    lista.unshift({d:s.dia,c:cargas});
+    historico[nome]=lista.slice(0,8);
+  });
+  gravaJSON(K_HIST,historico);
+}
+
+if(!sessao||sessao.dia!==dataHoje()){
+  arquivarSessao(sessao);
+  sessao={dia:dataHoje(),feito:{},carga:{}};
+  gravaJSON(K_SESSAO,sessao);
+}
+
+function chaveEx(nome){ return planoAtual+"|"+treinoAtual+"|"+nome; }
+
+function ultimaCarga(nome){
+  const lista=historico[nome];
+  if(!lista||!lista.length) return "";
+  const cargas=(lista[0].c||[]).filter(c=>c);
+  if(!cargas.length) return "";
+  const p=String(lista[0].d).split("-");
+  return cargas.join(" · ")+" kg · "+p[2]+"/"+p[1];
+}
+
+function limparTreino(){
+  const pref=planoAtual+"|"+treinoAtual+"|";
+  [sessao.feito,sessao.carga].forEach(obj=>{
+    Object.keys(obj).forEach(k=>{ if(k.indexOf(pref)===0) delete obj[k]; });
+  });
+  gravaJSON(K_SESSAO,sessao);
+  selecionar(treinoAtual);
+}
 
 /* ---------- cronometro de intervalo ---------- */
 const elCrono=document.getElementById("cronometro");
@@ -734,7 +799,9 @@ function abrirPlano(k){
   elVoltar.hidden=false;
   elTitulo.textContent=p.nome;
   elRail.hidden=false; elRail.innerHTML="";
-  elRodape.textContent="Toque numa série para marcar como feita. As marcações somem ao trocar de treino.";
+  elRodape.innerHTML='Marque a série e anote a carga. Fica salvo neste aparelho até o fim do dia.<br>'+
+    '<button class="btn btn-sm btn-link p-0 mt-1" id="limpar" type="button">Limpar este treino</button>';
+  document.getElementById("limpar").addEventListener("click",limparTreino);
 
   Object.keys(p.treinos).forEach(t=>{
     const b=document.createElement("button");
@@ -758,6 +825,7 @@ function abrirPlano(k){
 
 /* ---------- monta um treino ---------- */
 function selecionar(t){
+  treinoAtual=t;
   const p=PLANOS[planoAtual];
   [...elRail.children].forEach(b=>{
     const on=b.dataset.t===t;
@@ -771,6 +839,11 @@ function selecionar(t){
     const id="subs-"+idx;
     // blocos de S sao compartilhados, entao as vezes trazem o proprio exercicio
     const alts=(e.alt||[]).filter(a=>a.trim().toLowerCase()!==e.n.trim().toLowerCase());
+    const ch=chaveEx(e.n);
+    const feito=sessao.feito[ch]||[];
+    const cargas=sessao.carga[ch]||[];
+    const ultima=ultimaCarga(e.n);
+    const rotulo=e.n.replace(/"/g,"&quot;");
     const el=document.createElement("div");
     el.className="card border-0 shadow-sm mb-3";
     el.innerHTML=`
@@ -784,8 +857,16 @@ function selecionar(t){
           </div>
         </div>
 
-        <div class="d-flex flex-wrap gap-2 mt-3">
-          ${e.s.map(s=>`<button class="set btn btn-outline-primary btn-sm flex-grow-1 fw-semibold" type="button" aria-pressed="false">${s}</button>`).join("")}
+        ${ultima?`<p class="text-body-secondary mb-0 mt-3" style="font-size:.72rem">Última vez: ${ultima}</p>`:""}
+
+        <div class="d-grid gap-2 ${ultima?"mt-1":"mt-3"}">
+          ${e.s.map((s,i)=>`<div class="serie">
+            <button class="set btn btn-outline-primary btn-sm fw-semibold${feito[i]?" active":""}"
+                    type="button" data-i="${i}" aria-pressed="${feito[i]?"true":"false"}">${s}</button>
+            <input class="carga form-control form-control-sm text-center" type="text"
+                   inputmode="decimal" enterkeyhint="done" placeholder="kg" data-i="${i}"
+                   value="${cargas[i]||""}" aria-label="Carga da série ${i+1} de ${rotulo}">
+          </div>`).join("")}
         </div>
 
         <div class="d-grid gap-2 mt-2">
@@ -833,6 +914,17 @@ function selecionar(t){
         const on=btn.getAttribute("aria-pressed")!=="true";
         btn.setAttribute("aria-pressed",String(on));
         btn.classList.toggle("active",on);
+        const arr=sessao.feito[ch]=sessao.feito[ch]||[];
+        arr[+btn.dataset.i]=on;
+        gravaJSON(K_SESSAO,sessao);
+      });
+    });
+
+    el.querySelectorAll(".carga").forEach(inp=>{
+      inp.addEventListener("input",()=>{
+        const arr=sessao.carga[ch]=sessao.carga[ch]||[];
+        arr[+inp.dataset.i]=inp.value.trim();
+        gravaJSON(K_SESSAO,sessao);
       });
     });
 

@@ -66,8 +66,13 @@ sufixo `Seguro`/`Segura` (`flexorSeguro`, `remadaApoiadaSegura`,
 
 ## O que dá para fazer
 
-- **Marcar série feita** — toque na série e ela fica preenchida. As marcações
-  são só da sessão: somem ao trocar de treino ou recarregar.
+- **Marcar série feita** — toque na série e ela fica preenchida. Fica salvo
+  até o fim do dia, então trocar de treino, fechar o app ou recarregar não
+  perde nada. "Limpar este treino", no rodapé, zera só o treino aberto.
+- **Anotar a carga** — campo ao lado de cada série. Acima dos exercícios
+  aparece a última vez que você registrou aquele movimento:
+  `Última vez: 82,5 kg · 19/09`. É o que responde se a progressão de carga
+  que as planilhas pedem está acontecendo.
 - **Cronômetro de intervalo** — toque na ficha do intervalo e a contagem
   aparece numa barra no rodapé, que fica visível enquanto você rola a tela.
   Tem `+30s` e botão de parar. Ao zerar, mostra "Pode ir", apita e some
@@ -92,6 +97,25 @@ certa se o iPhone congelar o timer com a tela apagada.
 > lateral de mudo, e não há como contornar isso pela página. A vibração
 > também não funciona: o iOS não suporta a API. Na prática, conte com a barra
 > na tela — e, se treinar no mudo, deixe o app visível.
+
+### Onde o progresso fica guardado
+
+Duas chaves no `localStorage`, só no aparelho — nada vai para servidor nenhum.
+
+| Chave | O que guarda |
+|---|---|
+| `treinos-sessao` | o dia de hoje, o que foi marcado e as cargas digitadas |
+| `treinos-historico` | as últimas 8 sessões de cada exercício |
+
+Quando o app abre e o dia virou, as cargas da sessão passam para o histórico
+e o dia recomeça limpo. O histórico é indexado pelo **nome do exercício**, não
+pela planilha: a carga do supino é a mesma esteja ele em que planilha estiver.
+
+> **Duas ressalvas.** O app não tem noção de usuário: se o Mizael e a Carol
+> abrirem no mesmo aparelho e navegador, as cargas se misturam. Em celulares
+> separados não há problema. E o Safari pode limpar dados de sites que ficam
+> dias sem abrir — adicionar à tela de início reduz o risco, mas ainda não
+> existe exportação de backup.
 
 ### Os links de busca
 
