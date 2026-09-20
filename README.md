@@ -112,7 +112,13 @@ aberto.
 - **Marcar série feita** — toque na série e ela fica preenchida. Fica salvo
   até o fim do dia, então trocar de treino, fechar o app ou recarregar não
   perde nada.
-- **Anotar a carga** — campo ao lado de cada série.
+- **Anotar a carga** — um campo por série. `4x 6-10` vira quatro linhas, uma
+  para cada série, porque é assim que dá para registrar progressão dentro do
+  próprio exercício.
+- **Ajustar séries e descanso** — muda quantas séries, quantas repetições e
+  quantos segundos de descanso, sem mexer no código. Fica valendo só naquele
+  exercício daquela planilha, e um selo *ajustado* avisa que ele não está mais
+  igual à prescrição. "Voltar ao original" desfaz.
 - **Progressão de carga** — o histórico daquele movimento, com barra por
   sessão e um aviso comparando com a vez anterior: *subiu 5 kg*, *manteve a
   carga*, *caiu 2,5 kg*. É o que responde se a progressão que as planilhas
@@ -156,6 +162,11 @@ Duas chaves no `localStorage`, só no aparelho — nada vai para servidor nenhum
 |---|---|
 | `treinos-sessao` | o dia de hoje, o que foi marcado e as cargas digitadas |
 | `treinos-historico` | as últimas 8 sessões de cada exercício |
+| `treinos-ajustes` | séries, repetições e descanso alterados por você |
+
+`treinos-ajustes` é indexado por `plano\|treino\|exercício` e **não expira com o
+dia**: um ajuste vale até você desfazer. Ele altera só a prescrição na tela;
+os dados da planilha continuam intactos no `index.html`.
 
 Quando o app abre e o dia virou, as cargas da sessão passam para o histórico
 e o dia recomeça limpo. O histórico é indexado pelo **nome do exercício**, não
@@ -287,8 +298,23 @@ O valor é a letra (ou número) do treino dentro de `treinos`:
 | `n` | nome do exercício |
 | `t` | técnica ou observação — use `"—"` para não mostrar nada |
 | `i` | intervalo — use `"—"` para não mostrar nada |
-| `s` | lista de séries; **cada item vira um botão** de marcar |
+| `s` | as séries — veja abaixo |
 | `alt` | substituições: um bloco de `S` ou uma lista escrita ali mesmo |
+
+#### O campo `s`
+
+Cada série vira uma linha na tela, com botão de marcar e campo de carga. Há
+duas formas de escrever, e o app expande a primeira:
+
+```js
+s:["4x 6-10"]                                        // 4 séries iguais
+s:["1x 15-20","1x 10-15","1x 8-12","1x 6-10"]        // pirâmide, 4 séries
+```
+
+As duas dão quatro linhas. Antes, `"4x 6-10"` virava **uma** linha e um campo
+de carga só — não dava para registrar a progressão dentro do exercício. A
+expansão acontece na renderização, então vale para todas as planilhas sem
+precisar reescrever os dados.
 
 O cardio entra como um exercício comum, com a duração no lugar das séries:
 
@@ -369,6 +395,7 @@ O que elas conferem:
 | Exercício ou substituição contraindicado em planilha `semAbdomen` | O erro que motivou o arquivo — invisível na tela |
 | Substituições vazias ou só com o próprio exercício | `alt:S.nomeErrado` vira `undefined`; o botão some |
 | Intervalo que o cronômetro não consegue ler | `i:"depende"` deixaria o exercício sem timer |
+| Séries que não expandem, ou mais de 12 num exercício | Pega `"40x 10"` e afins |
 | `semana` apontando para treino que não existe | Dia da semana abriria a planilha errada |
 | Campos obrigatórios, séries vazias, nome de planilha repetido | Estrutura |
 | Bloco de `S` que ninguém usa | Aviso, não falha — é sobra de edição |

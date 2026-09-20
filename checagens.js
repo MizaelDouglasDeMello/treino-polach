@@ -44,6 +44,19 @@ function extrairDados() {
   return ctx.__;
 }
 
+/* mesma expansao do app: "4x 6-10" sao quatro series, uma linha e um campo de
+   carga cada. Se isso divergir do app, a contagem conferida aqui nao e a que
+   aparece na tela. */
+function expandirSeries(lista){
+  const fora=[];
+  (lista||[]).forEach(txt=>{
+    const m=String(txt).match(/^\s*(\d+)\s*x\s*(.+)$/i);
+    if(m){ const n=parseInt(m[1],10); for(let i=0;i<n;i++) fora.push(m[2].trim()); }
+    else fora.push(String(txt).trim());
+  });
+  return fora;
+}
+
 /* mesmo parser do app; se divergir, a checagem perde o sentido */
 function duracoes(txt) {
   return String(txt).split("/").map(p => p.trim()).filter(Boolean).map(p => {
@@ -101,6 +114,12 @@ function checar(S, PLANOS) {
         if (typeof e.t !== "string") erro(onde, "campo t ausente (use \"—\" para esconder)");
         if (typeof e.i !== "string") erro(onde, "campo i ausente (use \"—\" para esconder)");
         if (!Array.isArray(e.s) || !e.s.length) erro(onde, "sem séries");
+        else {
+          const series = expandirSeries(e.s);
+          if (!series.length) erro(onde, "as séries não expandem em nada");
+          if (series.length > 12) erro(onde, series.length + " séries — confira se não é erro de digitação em \"" + e.s.join('", "') + "\"");
+          series.forEach((r, n) => { if (!r) erro(onde, "série " + (n + 1) + " ficou sem repetições"); });
+        }
         if (!Array.isArray(e.alt) || !e.alt.length) {
           erro(onde, "sem substituições — bloco de S escrito errado vira undefined aqui");
           return;

@@ -54,7 +54,8 @@
   .serie{display:flex;gap:.5rem}
   .serie .set{flex:1 1 auto}
   /* largura fixa: input solto tem largura natural de ~20 caracteres e quebra o flex */
-  .carga{flex:0 0 84px;width:84px;font-size:16px;padding:.25rem .4rem}  /* <16px faz o iOS dar zoom ao focar */
+  .carga{flex:0 0 84px;width:84px}
+  .carga,.campo{font-size:16px;padding:.25rem .4rem}  /* <16px faz o iOS dar zoom ao focar */  /* <16px faz o iOS dar zoom ao focar */
 
   /* cronometro de intervalo */
   .crono{min-height:36px}
@@ -548,7 +549,8 @@ const ICONES = {
   "youtube":'<path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/>',
   "check2":'<path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>',
   "volume-up-fill":'<path d="M11.536 14.01A8.47 8.47 0 0 0 14.026 8a8.47 8.47 0 0 0-2.49-6.01l-.708.707A7.48 7.48 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303z"/> <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.48 5.48 0 0 1 11.025 8a5.48 5.48 0 0 1-1.61 3.89z"/> <path d="M8.707 11.182A4.5 4.5 0 0 0 10.025 8a4.5 4.5 0 0 0-1.318-3.182L8 5.525A3.5 3.5 0 0 1 9.025 8 3.5 3.5 0 0 1 8 10.475zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06"/>',
-  "volume-mute-fill":'<path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06m7.137 2.096a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0"/>'
+  "volume-mute-fill":'<path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06m7.137 2.096a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0"/>',
+  "sliders":'<path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>'
 };
 function ic(nome,classe){
   return '<svg class="bi '+(classe||"")+'" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">'+ICONES[nome]+'</svg>';
@@ -625,6 +627,57 @@ if(!sessao||sessao.dia!==dataHoje()){
 
 function chaveEx(nome){ return planoAtual+"|"+treinoAtual+"|"+nome; }
 
+/* Ajustes do usuario por exercicio: series, repeticoes e descanso. Valem sobre
+   o que a planilha prescreve e nao expiram com o dia, diferente da sessao. */
+const K_AJUSTES="treinos-ajustes";
+let ajustes=leJSON(K_AJUSTES,{});
+
+function ajusteDe(nome){ return ajustes[chaveEx(nome)]||null; }
+
+function gravarAjuste(nome,dados){
+  const ch=chaveEx(nome);
+  if(dados) ajustes[ch]=dados; else delete ajustes[ch];
+  gravaJSON(K_AJUSTES,ajustes);
+}
+
+/* segundos -> "90 s" / "2 min", para caber no mesmo formato da planilha */
+function intervaloTexto(seg){
+  return (seg>=60 && seg%60===0) ? (seg/60)+" min" : seg+" s";
+}
+
+/* "4x 6-10" quer dizer quatro series, mas como uma entrada so virava uma linha
+   e um campo de carga, sem progressao. Aqui cada serie vira uma linha propria.
+   "1x 15-20" continua valendo uma, entao as planilhas em piramide nao mudam. */
+function expandirSeries(e){
+  const aj=ajusteDe(e.n);
+  if(aj && aj.series) return Array.from({length:aj.series},()=>aj.reps||"");
+  const fora=[];
+  (e.s||[]).forEach(txt=>{
+    const m=String(txt).match(/^\s*(\d+)\s*x\s*(.+)$/i);
+    if(m){
+      const n=parseInt(m[1],10), reps=m[2].trim();
+      for(let i=0;i<n;i++) fora.push(reps);
+    }else{
+      fora.push(String(txt).trim());
+    }
+  });
+  return fora;
+}
+
+/* o intervalo mostrado na lista tem de seguir o ajuste, igual ao resumo */
+function intervaloResumo(e){
+  const aj=ajusteDe(e.n);
+  if(aj && aj.descanso) return intervaloTexto(aj.descanso);
+  return e.i!=="—" ? e.i : "";
+}
+
+function resumoSeries(e){
+  const l=expandirSeries(e);
+  if(!l.length) return "";
+  if(l.length===1) return l[0];                       // serie unica ou cardio
+  return l.every(r=>r===l[0]) ? l.length+"x "+l[0] : l.length+" séries";
+}
+
 function ultimaCarga(nome){
   const lista=historico[nome];
   if(!lista||!lista.length) return "";
@@ -662,6 +715,12 @@ function duracoes(txt){
 }
 
 function cronoBotoes(e){
+  const aj=ajusteDe(e.n);
+  if(aj && aj.descanso){
+    const t=intervaloTexto(aj.descanso);
+    return `<div class="d-flex flex-wrap gap-2"><button type="button" class="crono btn btn-sm rounded-pill bg-primary-subtle text-primary-emphasis border-0 fw-semibold"
+             data-seg="${aj.descanso}" data-nome="${e.n.replace(/"/g,"&quot;")}">${ic("stopwatch","me-1")}Intervalo ${t}</button></div>`;
+  }
   if(e.i==="—") return "";
   const ds=duracoes(e.i);
   if(!ds.length) return `<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">${ic("stopwatch","me-1")}Intervalo ${e.i}</span>`;
@@ -907,9 +966,9 @@ function selecionar(t,modo){
           '<h3 class="h6 fw-semibold mb-1">'+e.n+'</h3>'+
           '<div class="d-flex flex-wrap gap-2">'+
             '<span class="badge rounded-pill bg-body-secondary text-body-secondary">'+
-              (e.s.length===1?e.s[0]:e.s.length+" séries")+'</span>'+
-            (e.i!=="—"?'<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">'+e.i+'</span>':"")+
-            (prontas?'<span class="badge rounded-pill text-bg-success">'+prontas+" de "+e.s.length+
+              resumoSeries(e)+'</span>'+
+            (intervaloResumo(e)?'<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">'+intervaloResumo(e)+'</span>':"")+
+            (prontas?'<span class="badge rounded-pill text-bg-success">'+prontas+" de "+expandirSeries(e).length+
               (prontas>1?" feitas":" feita")+'</span>':"")+
           '</div>'+
         '</div>'+
@@ -943,6 +1002,8 @@ function abrirExercicio(idx,modo){
   const feito=sessao.feito[ch]||[];
   const cargas=sessao.carga[ch]||[];
   const rotulo=e.n.replace(/"/g,"&quot;");
+  const series=expandirSeries(e);
+  const aj=ajusteDe(e.n);
 
   elConteudo.innerHTML=`
     <div class="card border-0 shadow-sm mt-3 mb-3">
@@ -952,18 +1013,52 @@ function abrirExercicio(idx,modo){
           <div class="min-w-0">
             <h2 class="h5 fw-semibold mb-1">${e.n}</h2>
             ${e.t!=="—"?`<p class="text-body-secondary small mb-2">${e.t}</p>`:""}
+            ${aj?`<span class="badge rounded-pill bg-warning-subtle text-warning-emphasis me-1">ajustado</span>`:""}
             ${cronoBotoes(e)}
           </div>
         </div>
 
         <div class="d-grid gap-2 mt-3">
-          ${e.s.map((s,i)=>`<div class="serie">
+          ${series.map((reps,i)=>`<div class="serie">
             <button class="set btn btn-outline-primary btn-sm fw-semibold${feito[i]?" active":""}"
-                    type="button" data-i="${i}" aria-pressed="${feito[i]?"true":"false"}">${s}</button>
+                    type="button" data-i="${i}" aria-pressed="${feito[i]?"true":"false"}">
+              <span class="opacity-50 me-1">${i+1}ª</span>${reps}</button>
             <input class="carga form-control form-control-sm text-center" type="text"
                    inputmode="decimal" enterkeyhint="done" placeholder="kg" data-i="${i}"
                    value="${cargas[i]||""}" aria-label="Carga da série ${i+1} de ${rotulo}">
           </div>`).join("")}
+        </div>
+
+        <div class="d-grid gap-2 mt-2">
+          <button class="acao btn btn-outline-secondary btn-sm" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#ajustar" aria-expanded="false" aria-controls="ajustar">
+            ${ic("sliders","me-1")}Ajustar séries e descanso
+          </button>
+        </div>
+
+        <div class="collapse" id="ajustar">
+          <div class="mt-3 p-3 rounded-3 bg-body-tertiary border-start border-3 border-primary-subtle">
+            <p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.68rem">Ajustar este exercício</p>
+            <div class="row g-2">
+              <div class="col-4">
+                <label class="form-label small mb-1" for="ajSeries">Séries</label>
+                <input class="form-control form-control-sm campo" id="ajSeries" type="text" inputmode="numeric" value="${aj?aj.series:series.length}">
+              </div>
+              <div class="col-8">
+                <label class="form-label small mb-1" for="ajReps">Repetições</label>
+                <input class="form-control form-control-sm campo" id="ajReps" type="text" value="${aj?aj.reps.replace(/"/g,"&quot;"):(series[0]||"").replace(/"/g,"&quot;")}">
+              </div>
+              <div class="col-12">
+                <label class="form-label small mb-1" for="ajDescanso">Descanso em segundos</label>
+                <input class="form-control form-control-sm campo" id="ajDescanso" type="text" inputmode="numeric" value="${aj?aj.descanso:(duracoes(e.i)[0]||{}).seg||""}">
+              </div>
+            </div>
+            <p class="text-body-secondary mb-2 mt-2" style="font-size:.72rem">A planilha pede ${resumoSeries({s:e.s})}${e.i!=="—"?" com "+e.i+" de intervalo":""}.</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary btn-sm flex-fill" type="button" id="ajSalvar">Salvar</button>
+              ${aj?'<button class="btn btn-outline-secondary btn-sm flex-fill" type="button" id="ajLimpar">Voltar ao original</button>':""}
+            </div>
+          </div>
         </div>
 
         <div class="d-grid gap-2 mt-2">
@@ -1042,7 +1137,8 @@ function abrirExercicio(idx,modo){
     });
   });
 
-  const swap=elConteudo.querySelector(".swap"), col=elConteudo.querySelector(".collapse");
+  // por id: o painel de ajuste tambem e .collapse e vem antes no DOM
+  const swap=elConteudo.querySelector(".swap"), col=document.getElementById("subs");
   if(swap&&col){
     col.addEventListener("show.bs.collapse",()=>{
       swap.classList.replace("btn-outline-danger","btn-danger");
@@ -1053,6 +1149,24 @@ function abrirExercicio(idx,modo){
       swap.innerHTML=ic("arrow-repeat","me-1")+"Máquina ocupada";
     });
   }
+
+  const salvar=document.getElementById("ajSalvar");
+  if(salvar) salvar.addEventListener("click",()=>{
+    const n=parseInt(document.getElementById("ajSeries").value,10);
+    const reps=document.getElementById("ajReps").value.trim();
+    const desc=parseInt(document.getElementById("ajDescanso").value,10);
+    if(!(n>=1&&n<=12)) return alert("Séries: use um número de 1 a 12.");
+    if(!reps) return alert("Escreva as repetições, por exemplo 8-12.");
+    if(!(desc>=5&&desc<=600)) return alert("Descanso: use um número de 5 a 600 segundos.");
+    gravarAjuste(e.n,{series:n,reps:reps,descanso:desc});
+    abrirExercicio(idx,"replace");
+  });
+
+  const limpar=document.getElementById("ajLimpar");
+  if(limpar) limpar.addEventListener("click",()=>{
+    gravarAjuste(e.n,null);
+    abrirExercicio(idx,"replace");
+  });
 
   const ant=document.getElementById("exAnterior"), prox=document.getElementById("exProximo");
   if(ant&&!ant.disabled) ant.addEventListener("click",()=>abrirExercicio(idx-1,"replace"));
@@ -1117,7 +1231,8 @@ function coletarBackup(){
   return {
     app:"treinos", versao:1, exportadoEm:new Date().toISOString(),
     sessao:leJSON(K_SESSAO,null),
-    historico:leJSON(K_HIST,{})
+    historico:leJSON(K_HIST,{}),
+    ajustes:leJSON(K_AJUSTES,{})
   };
 }
 
@@ -1144,6 +1259,12 @@ function importarBackup(dados){
     historico[nome]=atuais.sort((a,b)=>String(b.d).localeCompare(String(a.d))).slice(0,8);
   });
   gravaJSON(K_HIST,historico);
+
+  // ajustes do backup nao sobrescrevem os daqui, que sao mais recentes
+  if(dados.ajustes&&typeof dados.ajustes==="object"){
+    Object.keys(dados.ajustes).forEach(ch=>{ if(!ajustes[ch]) ajustes[ch]=dados.ajustes[ch]; });
+    gravaJSON(K_AJUSTES,ajustes);
+  }
 
   // a sessao so volta se for do mesmo dia; a de ontem ja virou historico
   if(dados.sessao&&dados.sessao.dia===dataHoje()){
