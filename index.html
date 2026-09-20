@@ -166,7 +166,12 @@ const S = {
   roscaMartelo:["Rosca martelo com halteres","Rosca inversa com barra","Rosca cross-body com halteres"],
   tricepsTesta:["Tríceps testa com barra W","Tríceps testa com halteres","Tríceps francês com halter"],
   tricepsCorda:["Tríceps na barra reta na polia","Tríceps na máquina","Coice na polia"],
-  tricepsFrances:["Tríceps francês com halter","Tríceps testa deitado com barra W","Extensão acima da cabeça na polia"]
+  tricepsFrances:["Tríceps francês com halter","Tríceps testa deitado com barra W","Extensão acima da cabeça na polia"],
+  tricepsMaquina:["Tríceps na polia com barra reta","Tríceps mergulho na máquina","Paralelas assistidas com tronco ereto"],
+  puxadaSupinada:["Barra fixa supinada (assistida se precisar)","Remada supinada na polia alta","Pulldown supinado na máquina"],
+  pulldown:["Pulldown na máquina","Pullover na polia alta com barra reta","Pulley frente pegada aberta"],
+  remPeitoApoiado:["Remada pronada na máquina com peito apoiado","Remada curvada pronada com barra","Remada cavalinho com pegada aberta"],
+  legPress:["Leg press horizontal","Hack machine","Agachamento no smith com pés à frente"]
 };
 
 const PLANOS = {
@@ -293,6 +298,44 @@ const PLANOS = {
         {n:"Abdominal supra no solo",t:"—",i:"1 min",s:["3x 15-20"],alt:S.supra}
       ]}
     }
+  },
+
+  david:{
+    nome:"Treino do David 4x na semana",
+    resumo:"Dias 1 a 4, pouco volume e carga alta",
+    semana:{1:"1",2:"2",4:"3",5:"4"},
+    treinos:{
+      "1":{dia:"SEG",ex:[
+        {n:"Supino reto",t:"Carga alta, desce em 3s e sobe controlado",i:"2 a 3 min",s:["2x 6-8"],alt:S.supReto},
+        {n:"Tríceps máquina",t:"Cotovelo parado, sem roubar com o ombro",i:"2 min",s:["2x 6-8"],alt:S.tricepsMaquina},
+        {n:"Remada aberta pronada com peito apoiado",t:"Pico de contração de 2s, peito colado no apoio",i:"90 s",s:["3x 8-10"],alt:S.remPeitoApoiado},
+        {n:"Puxada supinada",t:"Puxa com o cotovelo, não com a mão",i:"90 s",s:["3x 8-10"],alt:S.puxadaSupinada},
+        {n:"Elevação lateral",t:"Repetições parciais após a falha",i:"60 s",s:["2x 8-10"],alt:S.lateral},
+        {n:"Tríceps francês",t:"Alonga bem embaixo antes de subir",i:"60 s",s:["2x 8-10"],alt:S.tricepsFrances}
+      ]},
+      "2":{dia:"TER",ex:[
+        {n:"Agachamento livre",t:"Progressão de carga, 2 séries de aquecimento antes",i:"2 a 3 min",s:["2x 6-8"],alt:S.agacho},
+        {n:"Cadeira flexora",t:"Carga alta, controla a volta em 3s",i:"2 min",s:["2x 6-8"],alt:S.flexorSent},
+        {n:"Extensora",t:"Pico de contração de 2s",i:"90 s",s:["3x 8-10"],alt:S.extensor},
+        {n:"Mesa flexora",t:"Quadril colado no banco",i:"90 s",s:["2x 8-10"],alt:S.flexorDeit},
+        {n:"Panturrilha sentado ou em pé",t:"Amplitude total, 2s embaixo",i:"60 s",s:["3x 6-8"],alt:S.panturrilhaPe}
+      ]},
+      "3":{dia:"QUI",ex:[
+        {n:"Supino reto",t:"Carga alta, volta mais pesada que a do dia 1",i:"2 a 3 min",s:["2x 6-8"],alt:S.supReto},
+        {n:"Desenvolvimento",t:"Progressão de carga, sem hiperestender a lombar",i:"2 a 3 min",s:["2x 6-8"],alt:S.desenv},
+        {n:"Puxada supinada",t:"Pico de contração de 2s",i:"90 s",s:["2x 8-10"],alt:S.puxadaSupinada},
+        {n:"Pull down",t:"Amplitude total, tronco levemente inclinado",i:"90 s",s:["3x 8-10"],alt:S.pulldown},
+        {n:"Crucifixo",t:"Cotovelo semi-flexionado fixo",i:"60 s",s:["2x 8-10"],alt:S.voador},
+        {n:"Rosca scott",t:"Não estica 100% embaixo, mantém tensão",i:"60 s",s:["3x 8-10"],alt:S.roscaScott}
+      ]},
+      "4":{dia:"SEX",ex:[
+        {n:"Levantamento terra",t:"Progressão de carga, coluna neutra do início ao fim",i:"2 a 3 min",s:["2x 6-8"],alt:S.terra},
+        {n:"Leg press",t:"Carga alta, não deixa a lombar sair do encosto",i:"2 a 3 min",s:["2x 6-8"],alt:S.legPress},
+        {n:"Extensora",t:"Pico de contração de 2s",i:"90 s",s:["3x 8-10"],alt:S.extensor},
+        {n:"Flexora",t:"Controla a volta em 3s",i:"90 s",s:["3x 8-10"],alt:S.flexorDeit},
+        {n:"Panturrilha em pé ou sentado",t:"Amplitude total, 2s embaixo",i:"60 s",s:["3x 8-10"],alt:S.panturrilhaSent}
+      ]}
+    }
   }
 };
 
@@ -316,13 +359,14 @@ function home(){
   elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
   elTitulo.textContent="Treinos"; elTag.textContent="";
   elRodape.textContent="Escolha a planilha que você vai usar.";
-  elConteudo.innerHTML='<p class="intro">Três planilhas disponíveis.</p>';
+  elConteudo.innerHTML='<p class="intro">Quatro planilhas disponíveis.</p>';
   Object.keys(PLANOS).forEach(k=>{
     const p=PLANOS[k];
     const letras=Object.keys(p.treinos);
     const b=document.createElement("button");
     b.className="plano"; b.type="button";
-    b.innerHTML=`<h2>${p.nome}</h2><p>${p.resumo}</p><p>Treinos ${letras.join(", ")}</p>`;
+    const rotulo=/^\d+$/.test(letras[0])?"Dias":"Treinos";
+    b.innerHTML=`<h2>${p.nome}</h2><p>${p.resumo}</p><p>${rotulo} ${letras.join(", ")}</p>`;
     b.addEventListener("click",()=>abrirPlano(k));
     elConteudo.appendChild(b);
   });
