@@ -121,7 +121,20 @@ const S = {
   puxadaSupinada:["Barra fixa supinada (assistida se precisar)","Remada supinada na polia alta","Pulldown supinado na máquina"],
   pulldown:["Pulldown na máquina","Pullover na polia alta com barra reta","Pulley frente pegada aberta"],
   remPeitoApoiado:["Remada pronada na máquina com peito apoiado","Remada curvada pronada com barra","Remada cavalinho com pegada aberta"],
-  legPress:["Leg press horizontal","Hack machine","Agachamento no smith com pés à frente"]
+  legPress:["Leg press horizontal","Hack machine","Agachamento no smith com pés à frente"],
+  /* blocos seguros para quem não pode fazer força abdominal */
+  gluteoSeguro:["Coice na polia baixa","Abdução na máquina sentada","Extensão de quadril no banco com caneleira"],
+  gluteoPolia:["Extensão de quadril na máquina","Abdução na máquina sentada","Coice no banco com caneleira"],
+  agachoApoiado:["Leg press 45° com pés altos","Hack machine com carga moderada","Agachamento no smith com pés à frente"],
+  cardioLeve:["Bicicleta ergométrica","Elíptico em ritmo constante","Escada (transport) em ritmo constante"],
+  caminhada:["Esteira com inclinação de 8 a 12%","Elíptico em ritmo constante","Bicicleta ergométrica"],
+  extensorSeguro:["Extensora unilateral","Leg press com pés baixos e juntos","Cadeira extensora com pausa de 2s"],
+  flexorSeguro:["Flexor deitado unilateral","Flexor sentado na máquina","Mesa flexora com pausa de 2s"],
+  remadaSentadaSegura:["Remada na máquina pegada neutra","Remada baixa sentada com corda","Puxada na polia baixa com triângulo"],
+  remadaApoiadaSegura:["Remada pronada na máquina com peito apoiado","Remada na máquina pegada neutra","Remada baixa sentada com barra reta"],
+  puxadaSegura:["Pulldown na máquina","Puxada na polia com pegada neutra","Puxada supinada na polia"],
+  desenvSeguro:["Desenvolvimento na máquina","Desenvolvimento sentado no smith","Desenvolvimento sentado com halteres"],
+  panturrilhaSegura:["Panturrilha no leg press","Panturrilha sentada na máquina","Panturrilha em pé na máquina"]
 };
 
 const PLANOS = {
@@ -290,6 +303,136 @@ const PLANOS = {
         {n:"Panturrilha em pé ou sentado",t:"Amplitude total, 2s embaixo",i:"60 s",s:["3x 8-10"],alt:S.panturrilhaSent}
       ]}
     }
+  },
+
+  mizael:{
+    nome:"Mizael — Preservação Muscular",
+    freq:"5x por semana",
+    resumo:"Segura a massa magra durante o emagrecimento: carga alta, volume moderado e cardio de baixo impacto",
+    semana:{1:"A",2:"B",3:"C",4:"D",5:"E"},
+    treinos:{
+      A:{dia:"SEG",ex:[
+        {n:"Supino reto com halteres",t:"Carga alta. É o estímulo pesado que avisa o corpo para não queimar músculo",i:"2 a 3 min",s:["4x 6-10"],alt:S.supReto},
+        {n:"Supino inclinado na máquina",t:"Progressão de carga",i:"90 s",s:["3x 8-12"],alt:S.supInc},
+        {n:"Desenvolvimento sentado com halteres",t:"Banco a 80°, sem hiperestender a lombar",i:"90 s",s:["3x 8-12"],alt:S.desenv},
+        {n:"Elevação lateral",t:"Repetições parciais após a falha",i:"45 s",s:["3x 12-15"],alt:S.lateral},
+        {n:"Tríceps corda",t:"Pico de contração de 2s",i:"60 s",s:["3x 10-15"],alt:S.tricepsCorda},
+        {n:"Tríceps francês",t:"Alonga bem embaixo antes de subir",i:"60 s",s:["2x 10-12"],alt:S.tricepsFrances},
+        {n:"Caminhada inclinada na esteira",t:"Ritmo em que ainda dá para conversar. Baixo impacto protege joelho e quadril",i:"—",s:["20 a 25 min"],alt:S.caminhada}
+      ]},
+      B:{dia:"TER",ex:[
+        {n:"Leg press 45°",t:"Desce só até onde a lombar não descola do encosto",i:"2 min",s:["4x 8-12"],alt:S.leg45},
+        {n:"Agachamento no smith",t:"Progressão de carga, joelho alinhado ao pé",i:"2 min",s:["3x 8-12"],alt:S.agacho},
+        {n:"Cadeira extensora",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.extensor},
+        {n:"Mesa flexora",t:"Controla a volta em 3s",i:"60 s",s:["3x 10-12"],alt:S.flexorDeit},
+        {n:"Panturrilha em pé",t:"Amplitude total, 2s embaixo",i:"45 s",s:["4x 10-15"],alt:S.panturrilhaPe}
+      ]},
+      C:{dia:"QUA",ex:[
+        {n:"Puxada frente pegada aberta",t:"Puxa com o cotovelo, peito para cima",i:"90 s",s:["4x 8-12"],alt:S.pulleyAberto},
+        {n:"Remada baixa triângulo",t:"Progressão de carga, sem balançar o tronco",i:"90 s",s:["4x 8-12"],alt:S.remTriangulo},
+        {n:"Remada pronada com peito apoiado",t:"Pico de contração de 2s",i:"90 s",s:["3x 10-12"],alt:S.remPeitoApoiado},
+        {n:"Crucifixo invertido",t:"Carga leve, foco no posterior de ombro",i:"45 s",s:["3x 12-15"],alt:S.crucInv},
+        {n:"Rosca direta com barra",t:"Cotovelo parado na lateral do corpo",i:"60 s",s:["3x 8-12"],alt:S.roscaBarra},
+        {n:"Rosca martelo",t:"—",i:"60 s",s:["3x 10-12"],alt:S.roscaMartelo},
+        {n:"Caminhada inclinada na esteira",t:"Mesmo ritmo do dia A",i:"—",s:["20 a 25 min"],alt:S.caminhada}
+      ]},
+      D:{dia:"QUI",ex:[
+        {n:"Stiff com halteres",t:"Quadril para trás, coluna neutra. Carga que permite controlar",i:"2 min",s:["4x 8-12"],alt:S.stiff},
+        {n:"Flexor sentado",t:"Pico de contração de 2s",i:"60 s",s:["3x 10-12"],alt:S.flexorSent},
+        {n:"Elevação de quadril com barra",t:"Sobe até o tronco ficar paralelo ao chão",i:"90 s",s:["3x 10-12"],alt:S.quadril},
+        {n:"Leg press com pés altos",t:"Ênfase em glúteo e posterior",i:"90 s",s:["3x 10-15"],alt:S.leg45},
+        {n:"Panturrilha sentada",t:"—",i:"45 s",s:["4x 12-15"],alt:S.panturrilhaSent}
+      ]},
+      E:{dia:"SEX",ex:[
+        {n:"Desenvolvimento na máquina",t:"Progressão de carga",i:"90 s",s:["3x 8-12"],alt:S.desenv},
+        {n:"Elevação lateral no cabo",t:"Unilateral, uma série de cada lado",i:"45 s",s:["4x 12-15"],alt:S.lateral},
+        {n:"Face pull na polia",t:"Puxa na altura do rosto, ombro para trás",i:"45 s",s:["3x 15"],alt:S.crucInv},
+        {n:"Rosca scott",t:"Não estica 100% embaixo, mantém tensão",i:"60 s",s:["3x 10-12"],alt:S.roscaScott},
+        {n:"Tríceps testa",t:"Cotovelo apontado para o teto",i:"60 s",s:["3x 10-12"],alt:S.tricepsTesta},
+        {n:"Abdominal supra",t:"—",i:"45 s",s:["3x RM"],alt:S.supra},
+        {n:"Caminhada inclinada na esteira",t:"Fecha a semana. Se estiver cansado, reduz a inclinação em vez de pular",i:"—",s:["25 a 30 min"],alt:S.caminhada}
+      ]}
+    }
+  },
+
+  carol:{
+    nome:"Carol — Definição e Força",
+    freq:"5x por semana",
+    resumo:"Recomposição com apoio de máquinas, sem força direta no abdômen (endometriose)",
+    semana:{1:"A",2:"B",3:"C",4:"D",5:"E"},
+    treinos:{
+      A:{dia:"SEG",ex:[
+        {n:"Leg press 45°",t:"Carga moderada. Expire na subida, nunca prenda o ar",i:"90 s",s:["3x 12-15"],alt:S.leg45},
+        {n:"Cadeira extensora",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.extensorSeguro},
+        {n:"Agachamento no smith com pés à frente",t:"Barra apoiada tira a carga da coluna. Se sentir pressão na barriga, troca pelo leg",i:"90 s",s:["3x 10-12"],alt:S.agachoApoiado},
+        {n:"Cadeira abdutora",t:"Tronco levemente à frente, 2s na abertura",i:"45 s",s:["3x 15-20"],alt:S.abdutor},
+        {n:"Panturrilha sentada",t:"—",i:"45 s",s:["3x 15-20"],alt:S.panturrilhaSent}
+      ]},
+      B:{dia:"TER",ex:[
+        {n:"Puxada frente pegada aberta",t:"Puxa com o cotovelo, peito para cima",i:"90 s",s:["3x 10-12"],alt:S.puxadaSegura},
+        {n:"Remada sentada com triângulo",t:"Sentada e apoiada, sem inclinar o tronco",i:"90 s",s:["3x 10-12"],alt:S.remadaSentadaSegura},
+        {n:"Remada com peito apoiado",t:"Peito colado no apoio. Evita a pressão que a remada curvada faz no abdômen",i:"60 s",s:["3x 12-15"],alt:S.remadaApoiadaSegura},
+        {n:"Crucifixo invertido na máquina",t:"Carga leve, foco no posterior de ombro",i:"45 s",s:["3x 15"],alt:S.crucInv},
+        {n:"Rosca alternada com halteres",t:"Cotovelo parado na lateral do corpo",i:"60 s",s:["3x 10-12"],alt:S.roscaBanco}
+      ]},
+      C:{dia:"QUA",ex:[
+        {n:"Mesa flexora",t:"Quadril colado no banco, volta em 3s",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Flexor sentado",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Extensão de quadril na máquina",t:"Substitui a elevação pélvica: mesmo glúteo, sem carga sobre o abdômen",i:"60 s",s:["3x 12-15"],alt:S.gluteoSeguro},
+        {n:"Coice na polia baixa",t:"Uma série de cada perna, sem arquear a lombar",i:"45 s",s:["3x 15 cada perna"],alt:S.gluteoPolia},
+        {n:"Cadeira adutora",t:"2s no fechamento",i:"45 s",s:["3x 15-20"],alt:S.adutor},
+        {n:"Panturrilha em pé",t:"—",i:"45 s",s:["3x 15-20"],alt:S.panturrilhaSegura}
+      ]},
+      D:{dia:"QUI",ex:[
+        {n:"Supino reto na máquina",t:"Progressão de carga",i:"90 s",s:["3x 10-12"],alt:S.supReto},
+        {n:"Supino inclinado com halteres",t:"Banco a 30°",i:"90 s",s:["3x 10-12"],alt:S.supInc},
+        {n:"Desenvolvimento sentado na máquina",t:"Encosto apoiado protege a lombar",i:"90 s",s:["3x 10-12"],alt:S.desenvSeguro},
+        {n:"Elevação lateral",t:"Carga leve, sobe só até a linha do ombro",i:"45 s",s:["3x 12-15"],alt:S.lateral},
+        {n:"Tríceps corda",t:"Cotovelo parado",i:"45 s",s:["3x 12-15"],alt:S.tricepsCorda}
+      ]},
+      E:{dia:"SEX",ex:[
+        {n:"Leg press com pés altos",t:"Ênfase em glúteo e posterior",i:"90 s",s:["3x 12-15"],alt:S.leg45},
+        {n:"Cadeira abdutora",t:"Drop na última série",i:"45 s",s:["4x 15-20"],alt:S.abdutor},
+        {n:"Extensão de quadril na máquina",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.gluteoSeguro},
+        {n:"Mesa flexora",t:"—",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Panturrilha sentada",t:"—",i:"45 s",s:["4x 15-20"],alt:S.panturrilhaSent},
+        {n:"Elíptico ou bicicleta",t:"Baixo impacto. Em dia de crise, reduz o ritmo em vez de pular o treino",i:"—",s:["20 a 25 min"],alt:S.cardioLeve}
+      ]}
+    }
+  },
+
+  dupla:{
+    nome:"Em Dupla — Corpo Inteiro",
+    freq:"3x por semana",
+    resumo:"Para treinar junto: revezando na mesma máquina, dentro das restrições dos dois",
+    semana:{1:"A",3:"B",5:"C"},
+    treinos:{
+      A:{dia:"SEG",ex:[
+        {n:"Leg press 45°",t:"Revezem na mesma máquina: um faz, o outro descansa. A carga muda, o exercício não",i:"90 s",s:["3x 10-15"],alt:S.leg45},
+        {n:"Supino reto na máquina",t:"Progressão de carga",i:"90 s",s:["3x 10-12"],alt:S.supReto},
+        {n:"Puxada frente pegada aberta",t:"Puxa com o cotovelo, peito para cima",i:"90 s",s:["3x 10-12"],alt:S.puxadaSegura},
+        {n:"Desenvolvimento sentado na máquina",t:"—",i:"60 s",s:["3x 10-12"],alt:S.desenvSeguro},
+        {n:"Cadeira extensora",t:"Pico de contração de 2s",i:"45 s",s:["3x 12-15"],alt:S.extensorSeguro},
+        {n:"Panturrilha em pé",t:"—",i:"45 s",s:["3x 15-20"],alt:S.panturrilhaSegura}
+      ]},
+      B:{dia:"QUA",ex:[
+        {n:"Remada sentada com triângulo",t:"Sentada e apoiada, sem inclinar o tronco",i:"90 s",s:["3x 10-12"],alt:S.remadaSentadaSegura},
+        {n:"Agachamento no smith com pés à frente",t:"Barra apoiada tira a carga da coluna",i:"90 s",s:["3x 10-12"],alt:S.agachoApoiado},
+        {n:"Supino inclinado com halteres",t:"Banco a 30°",i:"90 s",s:["3x 10-12"],alt:S.supInc},
+        {n:"Mesa flexora",t:"Volta em 3s",i:"60 s",s:["3x 12-15"],alt:S.flexorSeguro},
+        {n:"Elevação lateral",t:"Carga leve, sobe até a linha do ombro",i:"45 s",s:["3x 12-15"],alt:S.lateral},
+        {n:"Rosca direta com barra",t:"Cotovelo parado na lateral do corpo",i:"45 s",s:["3x 10-12"],alt:S.roscaBarra}
+      ]},
+      C:{dia:"SEX",ex:[
+        {n:"Extensão de quadril na máquina",t:"Pico de contração de 2s",i:"60 s",s:["3x 12-15"],alt:S.gluteoSeguro},
+        {n:"Cadeira abdutora",t:"Tronco levemente à frente",i:"45 s",s:["3x 15-20"],alt:S.abdutor},
+        {n:"Remada com peito apoiado",t:"Peito colado no apoio",i:"90 s",s:["3x 10-12"],alt:S.remadaApoiadaSegura},
+        {n:"Supino reto com halteres",t:"Um faz, o outro passa os halteres",i:"90 s",s:["3x 10-12"],alt:S.supReto},
+        {n:"Tríceps corda",t:"—",i:"45 s",s:["3x 12-15"],alt:S.tricepsCorda},
+        {n:"Rosca alternada com halteres",t:"—",i:"45 s",s:["3x 10-12"],alt:S.roscaBanco},
+        {n:"Elíptico ou esteira inclinada lado a lado",t:"Fecha junto. Ritmo em que os dois conseguem conversar",i:"—",s:["20 min"],alt:S.cardioLeve}
+      ]}
+    }
   }
 };
 
@@ -414,6 +557,8 @@ function selecionar(t){
   p.treinos[t].ex.forEach((e,idx)=>{
     const busca=e.n.replace(/ ou .*$/,"").replace(/ \+ .*$/,"");
     const id="subs-"+idx;
+    // blocos de S sao compartilhados, entao as vezes trazem o proprio exercicio
+    const alts=(e.alt||[]).filter(a=>a.trim().toLowerCase()!==e.n.trim().toLowerCase());
     const el=document.createElement("div");
     el.className="card border-0 shadow-sm mb-3";
     el.innerHTML=`
@@ -432,10 +577,10 @@ function selecionar(t){
         </div>
 
         <div class="d-grid gap-2 mt-2">
-          <button class="swap acao btn btn-outline-danger btn-sm" type="button"
+          ${alts.length?`<button class="swap acao btn btn-outline-danger btn-sm" type="button"
                   data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">
             ${ic("arrow-repeat","me-1")}Máquina ocupada
-          </button>
+          </button>`:""}
           <div class="d-flex gap-2">
             <a class="acao btn btn-outline-secondary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
                href="${IG+encodeURIComponent(busca+" execução")}" target="_blank" rel="noopener">
@@ -448,14 +593,14 @@ function selecionar(t){
           </div>
         </div>
 
-        <div class="collapse" id="${id}">
+        ${alts.length?`<div class="collapse" id="${id}">
           <div class="mt-3 p-3 rounded-3 bg-body-tertiary border-start border-3 border-danger-subtle">
             <p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.68rem">Substituições que mantêm o estímulo</p>
             <ul class="list-unstyled mb-0 small">
-              ${e.alt.map(a=>`<li class="d-flex gap-2 mb-2">${ic("check2","text-danger-emphasis mt-1")}<span>${a}</span></li>`).join("")}
+              ${alts.map(a=>`<li class="d-flex gap-2 mb-2">${ic("check2","text-danger-emphasis mt-1")}<span>${a}</span></li>`).join("")}
             </ul>
           </div>
-        </div>
+        </div>`:""}
       </div>`;
 
     el.querySelectorAll(".set").forEach(btn=>{
@@ -467,6 +612,7 @@ function selecionar(t){
     });
 
     const swap=el.querySelector(".swap"), col=el.querySelector(".collapse");
+    if(swap&&col){
     col.addEventListener("show.bs.collapse",()=>{
       swap.classList.replace("btn-outline-danger","btn-danger");
       swap.innerHTML=ic("x-lg","me-1")+"Fechar substituições";
@@ -475,6 +621,7 @@ function selecionar(t){
       swap.classList.replace("btn-danger","btn-outline-danger");
       swap.innerHTML=ic("arrow-repeat","me-1")+"Máquina ocupada";
     });
+    }
 
     elConteudo.appendChild(el);
   });
