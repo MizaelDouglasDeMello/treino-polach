@@ -97,8 +97,9 @@ você não perde o lugar no meio do treino.
 A tela inicial. Cada planilha mostra nome, resumo, frequência e quais treinos
 tem.
 
-No topo, um cartão mostra a **sequência de dias** e quantos treinos você fez
-no mês. Tocar nele abre o calendário.
+No topo fica o **seletor de perfil** — Mizael ou Carol. Logo abaixo, um cartão
+mostra a **sequência de dias** e quantos treinos foram feitos no mês. Tocar nele
+abre o calendário.
 
 No fim, **Limpar tudo de hoje** zera as marcações e cargas do dia em todas as
 planilhas de uma vez — útil quando você começou o treino errado ou quer
@@ -188,8 +189,7 @@ de 30 a 300 kg. Com menos de duas medidas não há linha, só um convite a anota
 > Perder peso é bom para quem está em déficit e ruim para quem está em
 > recomposição, e o app não sabe qual é o caso de quem está olhando.
 
-Vale a mesma ressalva das cargas: o app não tem noção de usuário. Dois pesos
-diferentes no mesmo navegador viram uma linha só.
+O peso é por perfil, então a linha do Mizael e a da Carol não se misturam.
 
 ## Sobre o cronômetro
 
@@ -208,6 +208,27 @@ toa. Onde o navegador não concede a trava, o resto continua funcionando igual.
 > lateral de mudo, e não há como contornar isso pela página. A vibração
 > também não funciona: o iOS não suporta a API. Na prática, conte com a barra
 > na tela — e, se treinar no mudo, deixe o app visível.
+
+## Perfis
+
+O seletor no topo da tela inicial troca entre **Mizael** e **Carol**. Cada um
+tem seu próprio histórico de carga, peso, calendário, ajustes e progresso do
+dia — o app inteiro passa a responder pela pessoa selecionada.
+
+O que **não** é por perfil: tema e som. São preferências do aparelho, não da
+pessoa.
+
+O perfil ativo aparece no rodapé de todas as telas, para não acontecer de
+alguém anotar carga no perfil errado sem perceber.
+
+**Backup** carrega o perfil de origem, e o arquivo sai como
+`treinos-backup-mizael-2026-09-20.json`. Se você importar um backup de um perfil
+estando no outro, o app avisa e pergunta antes — aceitando, ele troca para o
+perfil dono do arquivo e importa lá, em vez de misturar.
+
+> Os perfis são a lista `PERFIS` no `index.html`. Para acrescentar ou renomear,
+> é uma linha. Dados gravados antes de os perfis existirem foram movidos para o
+> primeiro da lista, uma única vez.
 
 ## Onde o progresso fica guardado
 
@@ -232,9 +253,9 @@ Quando o app abre e o dia virou, as cargas da sessão passam para o histórico
 e o dia recomeça limpo. O histórico é indexado pelo **nome do exercício**, não
 pela planilha: a carga do supino é a mesma esteja ele em que planilha estiver.
 
-> **Ressalva.** O app não tem noção de usuário: se o Mizael e a Carol abrirem
-> no mesmo aparelho e navegador, as cargas se misturam. Em celulares separados
-> não há problema.
+Cada chave é gravada **por perfil** (`treinos-peso:mizael`,
+`treinos-peso:carol`…), então os dois podem usar o mesmo aparelho sem misturar
+carga, peso nem calendário. Veja [Perfis](#perfis).
 
 ## Backup
 

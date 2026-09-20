@@ -611,7 +611,33 @@ function historiar(estado,modo){
    historico: as ultimas 8 sessoes de cada exercicio, indexadas pelo nome, porque
    a carga do supino e a mesma esteja ele em que planilha estiver.
    Virou o dia: o que ficou na sessao vai para o historico e o dia comeca limpo. */
-const K_SESSAO="treinos-sessao", K_HIST="treinos-historico";
+/* ---------- perfil ----------
+   Carga, peso e calendario sao de uma pessoa so. Sem perfil, dois corpos
+   diferentes no mesmo navegador viram uma linha so e o dado perde o sentido.
+   Tema e som ficam de fora: sao do aparelho, nao da pessoa. */
+const PERFIS=[{id:"mizael",nome:"Mizael"},{id:"carol",nome:"Carol"}];
+const K_PERFIL="treinos-perfil";
+
+let perfil=PERFIS[0].id;
+try{
+  const v=localStorage.getItem(K_PERFIL);
+  if(PERFIS.some(x=>x.id===v)) perfil=v;
+}catch(err){}
+
+function nomeDoPerfil(){
+  const p=PERFIS.filter(x=>x.id===perfil)[0];
+  return p?p.nome:PERFIS[0].nome;
+}
+
+/* as chaves carregam o perfil; trocar de pessoa troca o conjunto inteiro */
+let K_SESSAO, K_HIST, K_AJUSTES, K_DIARIO, K_PESO;
+function atualizarChaves(){
+  K_SESSAO ="treinos-sessao:"+perfil;
+  K_HIST   ="treinos-historico:"+perfil;
+  K_AJUSTES="treinos-ajustes:"+perfil;
+  K_DIARIO ="treinos-diario:"+perfil;
+  K_PESO   ="treinos-peso:"+perfil;
+}
 
 function leJSON(k,padrao){
   try{ const v=localStorage.getItem(k); return v?JSON.parse(v):padrao; }catch(err){ return padrao; }
@@ -623,8 +649,7 @@ function dataHoje(){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 
-let historico=leJSON(K_HIST,{});
-let sessao=leJSON(K_SESSAO,null);
+let historico={}, sessao=null, ajustes={}, diario={}, pesos={};
 
 function arquivarSessao(s){
   if(!s||!s.dia||!s.carga) return;
@@ -639,19 +664,52 @@ function arquivarSessao(s){
   gravaJSON(K_HIST,historico);
 }
 
-if(!sessao||sessao.dia!==dataHoje()){
-  arquivarSessao(sessao);
-  sessao={dia:dataHoje(),feito:{},carga:{},exFeito:{}};
-  gravaJSON(K_SESSAO,sessao);
+/* Dados gravados antes de existir perfil ficam com o primeiro da lista, que e
+   quem estava usando o aparelho. Roda uma vez so. */
+function migrarParaPerfil(){
+  try{
+    if(localStorage.getItem("treinos-migrado")) return;
+    ["treinos-sessao","treinos-historico","treinos-ajustes","treinos-diario","treinos-peso"]
+      .forEach(base=>{
+        const v=localStorage.getItem(base);
+        if(v===null) return;
+        if(localStorage.getItem(base+":"+PERFIS[0].id)===null) localStorage.setItem(base+":"+PERFIS[0].id,v);
+        localStorage.removeItem(base);
+      });
+    localStorage.setItem("treinos-migrado","1");
+  }catch(err){}
 }
+
+function carregarPerfil(){
+  atualizarChaves();
+  historico=leJSON(K_HIST,{});
+  ajustes  =leJSON(K_AJUSTES,{});
+  diario   =leJSON(K_DIARIO,{});
+  pesos    =leJSON(K_PESO,{});
+  sessao   =leJSON(K_SESSAO,null);
+  if(!sessao||sessao.dia!==dataHoje()){
+    arquivarSessao(sessao);
+    sessao={dia:dataHoje(),feito:{},carga:{},exFeito:{}};
+    gravaJSON(K_SESSAO,sessao);
+  }
+}
+
+function trocarPerfil(id){
+  if(id===perfil||!PERFIS.some(x=>x.id===id)) return;
+  perfil=id;
+  try{ localStorage.setItem(K_PERFIL,perfil); }catch(err){}
+  calAno=null; calDiaAberto=null;      // o calendario recomeca no mes atual
+  carregarPerfil();
+  home();
+}
+
+migrarParaPerfil();
+carregarPerfil();
 
 function chaveEx(nome){ return planoAtual+"|"+treinoAtual+"|"+nome; }
 
 /* Ajustes do usuario por exercicio: series, repeticoes e descanso. Valem sobre
    o que a planilha prescreve e nao expiram com o dia, diferente da sessao. */
-const K_AJUSTES="treinos-ajustes";
-let ajustes=leJSON(K_AJUSTES,{});
-
 function ajusteDe(nome){ return ajustes[chaveEx(nome)]||null; }
 
 function gravarAjuste(nome,dados){
@@ -756,9 +814,6 @@ function cronoBotoes(e){
    sessao.exFeito guarda os exercicios concluidos hoje, e some com o dia.
    diario guarda os treinos concluidos por data, e nao some nunca: e ele que
    alimenta o calendario e a sequencia. */
-const K_DIARIO="treinos-diario";
-let diario=leJSON(K_DIARIO,{});
-
 function chaveData(d){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
@@ -876,7 +931,7 @@ function abrirCalendario(modo){
   elNote.hidden=true;
   elTitulo.textContent="Calendário";
   elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
-  elRodape.textContent="Um treino concluído marca o dia.";
+  elRodape.textContent=nomeDoPerfil()+" · um treino concluído marca o dia.";
   desenharCalendario();
   window.scrollTo({top:0,behavior:"instant"});
 }
@@ -962,9 +1017,6 @@ function desenharCalendario(){
    Uma medida por data, a ultima do dia vence. O grafico e SVG desenhado aqui
    mesmo: biblioteca de grafico custaria mais que o app inteiro e quebraria o
    funcionamento sem sinal. */
-const K_PESO="treinos-peso";
-let pesos=leJSON(K_PESO,{});
-
 function listaDePesos(){
   return Object.keys(pesos).sort().map(d=>({d:d,kg:pesos[d]}));
 }
@@ -1275,9 +1327,18 @@ function home(){
   elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
   elTitulo.textContent="Treinos";
   elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
-  elRodape.textContent="Escolha a planilha que você vai usar.";
-  elConteudo.innerHTML=blocoResumo()+
+  elRodape.textContent="Perfil de "+nomeDoPerfil()+". Escolha a planilha que você vai usar.";
+  elConteudo.innerHTML=
+    '<div class="btn-group w-100 mt-3" role="group" aria-label="Perfil">'+
+      PERFIS.map(x=>'<button type="button" class="btn btn-sm perfil '+
+        (x.id===perfil?"btn-primary":"btn-outline-secondary")+'" data-p="'+x.id+'"'+
+        (x.id===perfil?' aria-current="true"':"")+'>'+x.nome+'</button>').join("")+
+    '</div>'+
+    blocoResumo()+
     '<p class="text-uppercase text-body-secondary fw-semibold tracking mt-4 mb-3" style="font-size:.72rem">Planilhas disponíveis</p>';
+  elConteudo.querySelectorAll(".perfil").forEach(b=>{
+    b.addEventListener("click",()=>trocarPerfil(b.dataset.p));
+  });
   document.getElementById("verCalendario").addEventListener("click",()=>abrirCalendario());
 
   Object.keys(PLANOS).forEach(k=>{
@@ -1397,7 +1458,7 @@ function abrirExercicio(idx,modo){
   elTitulo.textContent=e.n;
   elRail.hidden=true;
   elNote.hidden=true;
-  elRodape.textContent="Treino "+treinoAtual+" · exercício "+(idx+1)+" de "+lista.length;
+  elRodape.textContent=nomeDoPerfil()+" · treino "+treinoAtual+" · exercício "+(idx+1)+" de "+lista.length;
 
   const busca=e.n.replace(/ ou .*$/,"").replace(/ \+ .*$/,"");
   // blocos de S sao compartilhados, entao as vezes trazem o proprio exercicio
@@ -1647,6 +1708,7 @@ function rodapeTreino(){
     (fechado
       ? '<span class="badge rounded-pill text-bg-success mb-2">'+ic("check-circle-fill","me-1")+'Treino concluído hoje</span><br>'
       : '<span class="text-body-secondary">'+prontos+' de '+total+' exercícios concluídos</span><br>')+
+    '<span class="text-body-secondary">'+nomeDoPerfil()+'</span><br>'+
     '<button class="btn btn-sm btn-link p-0 mt-1" id="limpar" type="button">Limpar este treino</button>';
   document.getElementById("limpar").addEventListener("click",limparTreino);
 }
@@ -1654,7 +1716,8 @@ function rodapeTreino(){
 /* ---------- backup ---------- */
 function coletarBackup(){
   return {
-    app:"treinos", versao:1, exportadoEm:new Date().toISOString(),
+    app:"treinos", versao:2, exportadoEm:new Date().toISOString(),
+    perfil:perfil, perfilNome:nomeDoPerfil(),
     sessao:leJSON(K_SESSAO,null),
     historico:leJSON(K_HIST,{}),
     ajustes:leJSON(K_AJUSTES,{}),
@@ -1664,7 +1727,7 @@ function coletarBackup(){
 }
 
 function exportarBackup(){
-  const nome="treinos-backup-"+dataHoje()+".json";
+  const nome="treinos-backup-"+perfil+"-"+dataHoje()+".json";
   const blob=new Blob([JSON.stringify(coletarBackup(),null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
@@ -1677,6 +1740,16 @@ function exportarBackup(){
    foi registrado depois. Mesma data do mesmo exercicio conta como o mesmo treino. */
 function importarBackup(dados){
   if(!dados||dados.app!=="treinos"||typeof dados.historico!=="object") throw new Error("formato");
+
+  // backup de outra pessoa nao pode cair no perfil aberto sem aviso
+  if(dados.perfil&&dados.perfil!==perfil&&PERFIS.some(x=>x.id===dados.perfil)){
+    const outro=PERFIS.filter(x=>x.id===dados.perfil)[0].nome;
+    if(!confirm("Este backup é do perfil "+outro+", e o perfil aberto é "+nomeDoPerfil()+
+                ". Importar para "+outro+"?")) throw new Error("cancelado");
+    perfil=dados.perfil;
+    try{ localStorage.setItem(K_PERFIL,perfil); }catch(err){}
+    carregarPerfil();
+  }
   let novos=0;
   Object.keys(dados.historico).forEach(nome=>{
     const vindos=Array.isArray(dados.historico[nome])?dados.historico[nome]:[];
@@ -1768,7 +1841,11 @@ function ligarBackup(){
         alert(novos?("Backup restaurado: "+novos+" sessão(ões) acrescentada(s)."):
                      "Backup lido. Nada de novo para acrescentar.");
         home();
-      }catch(err){ alert("Não consegui ler esse arquivo. Ele precisa ser um backup exportado por este app."); }
+      }catch(err){
+        // cancelar no aviso de perfil nao e arquivo invalido
+        if(err&&err.message==="cancelado") alert("Importação cancelada. Nada foi alterado.");
+        else alert("Não consegui ler esse arquivo. Ele precisa ser um backup exportado por este app.");
+      }
     };
     leitor.onerror=()=>alert("Não consegui ler o arquivo.");
     leitor.readAsText(arq);
