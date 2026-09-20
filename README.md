@@ -149,8 +149,9 @@ aberto.
 
 ### 4. Calendário
 
-Chega pelo cartão no topo da tela inicial. Veja
-[Calendário e sequência](#calendário-e-sequência).
+Chega pelo cartão no topo da tela inicial. Reúne o
+[calendário](#calendário-e-sequência) e o
+[peso corporal](#peso-corporal).
 
 No topo de todas as telas, o **botão de som** desliga o apito do cronômetro e o
 **de tema** alterna claro e escuro. As duas escolhas ficam guardadas.
@@ -168,6 +169,27 @@ marcado mostra quais treinos foram feitos nele. As setas andam pelos meses.
 A sequência conta os dias seguidos até hoje. Se você ainda não treinou hoje ela
 conta a partir de ontem, para não zerar no meio do dia só porque você ainda não
 foi à academia.
+
+## Peso corporal
+
+No fim da tela do calendário. Anote o peso do dia e o gráfico monta a linha ao
+longo do tempo, com o peso atual em destaque e a variação **em 30 dias** e
+**desde a primeira medida**.
+
+O gráfico é SVG desenhado pelo próprio app — biblioteca de gráfico custaria mais
+que o app inteiro e quebraria o funcionamento sem sinal. O eixo do tempo respeita
+o intervalo real entre as pesagens, então uma semana sem pesar aparece como um
+vão, não como um ponto a mais.
+
+Uma medida por dia, a última vence. Aceita vírgula ou ponto, e recusa valor fora
+de 30 a 300 kg. Com menos de duas medidas não há linha, só um convite a anotar.
+
+> As setas de variação são **neutras de propósito**, sem verde nem vermelho.
+> Perder peso é bom para quem está em déficit e ruim para quem está em
+> recomposição, e o app não sabe qual é o caso de quem está olhando.
+
+Vale a mesma ressalva das cargas: o app não tem noção de usuário. Dois pesos
+diferentes no mesmo navegador viram uma linha só.
 
 ## Sobre o cronômetro
 
@@ -197,6 +219,7 @@ Duas chaves no `localStorage`, só no aparelho — nada vai para servidor nenhum
 | `treinos-historico` | as últimas 8 sessões de cada exercício |
 | `treinos-ajustes` | séries, repetições e descanso alterados por você |
 | `treinos-diario` | os treinos concluídos em cada data |
+| `treinos-peso` | o peso corporal medido em cada data |
 
 `treinos-diario` é o que alimenta o calendário e a sequência. Diferente da
 sessão, ele nunca expira — "Limpar tudo de hoje" só apaga o dia de hoje.
