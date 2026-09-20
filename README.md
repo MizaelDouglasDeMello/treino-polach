@@ -65,9 +65,14 @@ justamente o que precisa ser evitado. Por isso existem blocos paralelos com
 sufixo `Seguro`/`Segura` (`flexorSeguro`, `remadaApoiadaSegura`,
 `puxadaSegura`, `gluteoSeguro`…), usados só por elas.
 
+Essas planilhas carregam `semAbdomen:true`, e é essa marca que as
+[checagens](#checagens) usam para saber onde vale a restrição. Planilha nova
+com a mesma necessidade só precisa da marca.
+
 > **Ao editar essas três planilhas, use os blocos seguros.** Trocar por um
 > bloco genérico não quebra nada e não aparece na tela — só volta a sugerir
-> exercício contraindicado dentro do painel de substituições.
+> exercício contraindicado dentro do painel de substituições. As checagens
+> existem justamente para esse erro não passar calado.
 
 ## O que dá para fazer
 
@@ -267,6 +272,29 @@ python -m http.server 8765
 ```
 
 Depois acesse `http://localhost:8765`.
+
+## Checagens
+
+```bash
+node checagens.js
+```
+
+Sem dependência nenhuma. Lê os dados direto do `index.html` e falha com código
+1 se algo estiver errado. Rodam sozinhas a cada push, pelo GitHub Actions.
+
+O que elas conferem:
+
+| Checagem | Por quê |
+|---|---|
+| Exercício ou substituição contraindicado em planilha `semAbdomen` | O erro que motivou o arquivo — invisível na tela |
+| Substituições vazias ou só com o próprio exercício | `alt:S.nomeErrado` vira `undefined`; o botão some |
+| Intervalo que o cronômetro não consegue ler | `i:"depende"` deixaria o exercício sem timer |
+| `semana` apontando para treino que não existe | Dia da semana abriria a planilha errada |
+| Campos obrigatórios, séries vazias, nome de planilha repetido | Estrutura |
+| Bloco de `S` que ninguém usa | Aviso, não falha — é sobra de edição |
+
+Depois de mexer nas planilhas, rode antes de dar push. Se falhar, a mensagem
+diz a planilha, o treino, o exercício e o motivo.
 
 ## Publicação
 
