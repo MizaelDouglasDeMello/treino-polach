@@ -1,245 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-bs-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0E1014">
+<meta name="theme-color" content="#212529">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Treinos">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <title>Treinos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
 <style>
-  :root{
-    --bg:#0E1014;
-    --bg-elev:#141821;
-    --surface:#181D26;
-    --surface-2:#1E242F;
-    --line:#2B323D;
-    --line-soft:#232935;
-    --text:#F2EFE8;
-    --muted:#8C94A1;
-    --brass:#E3B855;
-    --brass-2:#CFA340;
-    --rust:#DD7450;
-    --ink:#171206;
-    --r:14px; --r-sm:10px; --pill:999px;
-    --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px -14px rgba(0,0,0,.7);
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{background:var(--bg)}
-  html,body{margin:0;padding:0}
+  /* Apenas o que o Bootstrap nao cobre: safe area do iPhone, toque e o trilho de dias. */
+  *{-webkit-tap-highlight-color:transparent}
+  button,a{touch-action:manipulation}
+  button{-webkit-user-select:none;user-select:none}
+  html,body{overscroll-behavior-y:none}
   body{
-    background:
-      radial-gradient(130% 55% at 50% 0%, rgba(227,184,85,.08) 0%, rgba(227,184,85,0) 62%),
-      var(--bg);
-    background-attachment:fixed;
-    color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
-    font-size:16px;line-height:1.45;
     -webkit-text-size-adjust:100%;text-size-adjust:100%;
     -webkit-font-smoothing:antialiased;
-    overscroll-behavior-y:none;
-    padding-bottom:calc(24px + env(safe-area-inset-bottom));
   }
-  h1,h2,h3,b{font-family:"Archivo",-apple-system,system-ui,sans-serif}
-  [hidden]{display:none !important}
-  button,a{touch-action:manipulation}
-  button{-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none}
+  .container-narrow{max-width:600px;margin-inline:auto}
 
-  header{
-    position:sticky;top:0;z-index:10;
-    background:rgba(14,16,20,.82);
-    -webkit-backdrop-filter:saturate(180%) blur(18px);
-    backdrop-filter:saturate(180%) blur(18px);
-    border-bottom:1px solid var(--line-soft);
-    padding-top:env(safe-area-inset-top);
-  }
-  .brand{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;max-width:600px;margin:0 auto}
-  .brand h1{
-    font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0;
-    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  }
-  .tag{
-    flex:0 0 auto;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);border:1px solid var(--line);border-radius:var(--pill);padding:5px 10px;
-  }
-  .tag:empty{display:none}
-  .tag[data-on="true"]{
-    color:var(--brass);border-color:rgba(227,184,85,.4);background:rgba(227,184,85,.1);
-  }
-  .back{
-    flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--pill);
-    color:var(--text);font:inherit;font-size:14px;font-weight:500;
-    padding:8px 14px 8px 10px;cursor:pointer;
-    transition:transform .12s ease,background .16s ease;
-  }
-  .back svg{width:16px;height:16px}
-  .back:active{transform:scale(.96);background:var(--surface-2)}
-  .back:focus-visible,.day:focus-visible,.set:focus-visible,.btn:focus-visible,.plano:focus-visible{
-    outline:2px solid var(--brass);outline-offset:2px;
-  }
+  header{padding-top:env(safe-area-inset-top)}
+  footer{padding-bottom:calc(1.5rem + env(safe-area-inset-bottom))}
 
   .rail{
-    display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;
-    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
-    max-width:600px;margin:0 auto;
+    display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
   }
   .rail::-webkit-scrollbar{display:none}
-  .day{
-    flex:1 0 auto;min-width:68px;scroll-snap-align:center;
-    background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-sm);
-    color:var(--muted);padding:9px 8px 8px;font:inherit;text-align:center;cursor:pointer;
-    transition:transform .12s ease,background .16s ease,border-color .16s ease;
-  }
-  .day b{display:block;font-size:19px;font-weight:800;color:var(--text);line-height:1.15}
-  .day small{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
-  .day:active{transform:scale(.96)}
-  .day[aria-selected="true"]{
-    background:linear-gradient(180deg,var(--brass) 0%,var(--brass-2) 100%);
-    border-color:var(--brass);color:rgba(23,18,6,.72);
-    box-shadow:0 5px 16px -8px rgba(227,184,85,.75);
-  }
-  .day[aria-selected="true"] b{color:var(--ink)}
+  .dia{min-width:68px;padding:.45rem .5rem;scroll-snap-align:center;line-height:1.2}
 
-  main{padding:0 16px;max-width:600px;margin:0 auto}
-  .intro{
-    color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
-    margin:22px 0 12px;
-  }
+  /* card clicavel da home */
+  button.plano{padding:0;text-align:left;font:inherit;color:inherit}
 
-  .plano{
-    display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
-    background:linear-gradient(180deg,var(--surface) 0%,var(--bg-elev) 100%);
-    border:1px solid var(--line-soft);border-radius:var(--r);
-    padding:18px 16px 18px 20px;margin:0 0 12px;font:inherit;color:var(--text);
-    position:relative;overflow:hidden;box-shadow:var(--shadow);
-    transition:transform .12s ease,border-color .16s ease;
-  }
-  .plano::before{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
-    background:linear-gradient(180deg,var(--brass),var(--rust));
-  }
-  .plano:active{transform:scale(.985);border-color:var(--line)}
-  .plano-txt{flex:1;min-width:0}
-  .plano h2{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.25}
-  .plano p{margin:5px 0 0;color:var(--muted);font-size:14px}
-  .chip{
-    display:inline-block;margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.05em;
-    color:var(--brass);background:rgba(227,184,85,.1);border:1px solid rgba(227,184,85,.25);
-    border-radius:var(--pill);padding:4px 10px;
-  }
-  .chev{width:20px;height:20px;color:var(--muted);flex:0 0 auto}
-
-  .today-note{
-    color:var(--muted);font-size:13px;margin:16px 0 0;padding:12px 14px;
-    background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-sm);
-  }
-
-  .ex{
-    background:linear-gradient(180deg,var(--surface) 0%,var(--bg-elev) 100%);
-    border:1px solid var(--line-soft);border-radius:var(--r);
-    padding:16px;margin:12px 0 0;box-shadow:var(--shadow);
-  }
-  .ex:first-child{margin-top:18px}
-  .ex-head{display:flex;gap:12px;align-items:flex-start}
-  .idx{
-    flex:0 0 28px;height:28px;display:grid;place-items:center;
-    background:rgba(227,184,85,.12);border:1px solid rgba(227,184,85,.3);color:var(--brass);
-    font-family:"Archivo",sans-serif;font-weight:800;font-size:13px;border-radius:9px;
-  }
-  .ex h3{font-size:17px;font-weight:700;line-height:1.3;margin:0;letter-spacing:-.01em}
-  .tech{color:var(--muted);font-size:13.5px;margin:7px 0 0;line-height:1.4}
-  .rest{
-    display:inline-flex;align-items:center;gap:5px;
-    color:var(--brass);font-size:12px;font-weight:700;letter-spacing:.02em;margin:9px 0 0;
-  }
-  .rest svg{width:13px;height:13px;flex:0 0 auto}
-
-  .sets{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
-  .set{
-    flex:1 1 auto;min-height:42px;
-    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);
-    color:var(--text);font:inherit;font-size:13px;font-weight:700;padding:8px 12px;cursor:pointer;
-    display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    transition:transform .12s ease,background .16s ease,color .16s ease,border-color .16s ease;
-  }
-  .set:active{transform:scale(.96)}
-  .set[aria-pressed="true"]{
-    background:linear-gradient(180deg,var(--brass) 0%,var(--brass-2) 100%);
-    border-color:var(--brass);color:var(--ink);
-    box-shadow:0 5px 14px -8px rgba(227,184,85,.8);
-  }
-  .set[aria-pressed="true"]::before{content:"✓";font-weight:800;font-size:12px}
-
-  .actions{display:flex;gap:8px;margin:12px 0 0;flex-wrap:wrap}
-  .btn{
-    flex:1 1 auto;min-height:44px;
-    background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);
-    color:var(--text);font:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;
-    display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;
-    transition:transform .12s ease,background .16s ease,border-color .16s ease;
-  }
-  .btn:active{transform:scale(.96)}
-  .btn.swap{
-    flex:1 1 100%;
-    background:rgba(221,116,80,.08);border-color:rgba(221,116,80,.45);color:var(--rust);
-  }
-  .btn.swap[aria-expanded="true"]{background:var(--rust);border-color:var(--rust);color:#1B0C06}
-  .btn svg{width:16px;height:16px;flex:0 0 auto}
-
-  .subs{
-    margin:10px 0 0;padding:14px;background:var(--bg);
-    border:1px solid var(--line-soft);border-left:3px solid var(--rust);border-radius:var(--r-sm);
-    animation:surge .18s ease;
-  }
-  @keyframes surge{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .subs p{
-    margin:0 0 10px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);
-  }
-  .subs ul{margin:0;padding:0;list-style:none}
-  .subs li{position:relative;padding-left:17px;margin:0 0 9px;font-size:14px;line-height:1.35}
-  .subs li::before{
-    content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;
-    background:var(--rust);
-  }
-  .subs li:last-child{margin:0}
-
-  footer{
-    padding:28px 16px calc(8px + env(safe-area-inset-bottom));
-    color:var(--muted);font-size:12px;text-align:center;line-height:1.5;
-    max-width:600px;margin:0 auto;
-  }
+  /* alvos de toque confortaveis no celular */
+  .set,.acao{min-height:44px}
+  .idx{width:2rem;height:2rem;display:grid;place-items:center;flex:0 0 auto}
+  .min-w-0{min-width:0}
+  .tracking{letter-spacing:.08em}
 
   @media (prefers-reduced-motion:reduce){
     *{animation-duration:.01ms !important;transition-duration:.01ms !important}
   }
 </style>
 </head>
-<body>
+<body class="bg-body-tertiary">
 
-<header>
-  <div class="brand">
-    <button class="back" id="voltar" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Voltar</button>
-    <h1 id="titulo">Treinos</h1>
-    <span class="tag" id="tag"></span>
+<header class="sticky-top bg-body border-bottom">
+  <div class="container-narrow d-flex align-items-center gap-2 px-3 py-2">
+    <button class="btn btn-sm btn-outline-secondary flex-shrink-0" id="voltar" type="button" hidden>
+      <i class="bi bi-chevron-left"></i> Voltar
+    </button>
+    <h1 class="h6 fw-semibold mb-0 flex-grow-1 text-truncate" id="titulo">Treinos</h1>
+    <span class="badge rounded-pill d-none flex-shrink-0" id="tag"></span>
+    <button class="btn btn-sm btn-outline-secondary flex-shrink-0" id="tema" type="button" aria-label="Alternar tema"></button>
   </div>
-  <div class="rail" role="tablist" aria-label="Dias de treino" id="rail" hidden></div>
+  <div class="container-narrow rail px-3 pb-2" role="tablist" aria-label="Dias de treino" id="rail" hidden></div>
 </header>
 
-<main>
-  <p class="today-note" id="note" hidden></p>
+<main class="container-narrow px-3">
+  <p class="alert alert-secondary small mt-3 mb-0" id="note" hidden></p>
   <div id="conteudo"></div>
 </main>
 
-<footer id="rodape">Escolha a planilha que você vai usar.</footer>
+<footer class="container-narrow px-3 pt-4 text-center small text-body-secondary" id="rodape">
+  Escolha a planilha que voc&ecirc; vai usar.
+</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
 const IG = "https://www.instagram.com/explore/search/keyword/?q=";
 const YT = "https://www.youtube.com/results?search_query=";
@@ -293,8 +127,9 @@ const S = {
 
 const PLANOS = {
   cinco:{
-    nome:"Avançado 5x na semana",
-    resumo:"Treinos A a E, foco em peito e ombros",
+    nome:"Hipertrofia Avançada",
+    freq:"5x por semana",
+    resumo:"Divisão A–E, alto volume com ênfase em peito e ombros",
     semana:{1:"A",2:"B",3:"C",5:"D",6:"E"},
     treinos:{
       A:{dia:"SEG",ex:[
@@ -355,8 +190,9 @@ const PLANOS = {
   },
 
   abc:{
-    nome:"ABC 6x na semana",
-    resumo:"Costas, peito/ombros e pernas, repetindo duas vezes",
+    nome:"Hipertrofia Intermediária",
+    freq:"6x por semana",
+    resumo:"Divisão ABC repetida duas vezes: costas, peito/ombros e pernas",
     semana:{1:"A",2:"B",3:"C",5:"A",6:"B",0:"C"},
     treinos:{
       A:{dia:"SEG/SEX",ex:[
@@ -390,8 +226,9 @@ const PLANOS = {
   },
 
   iniciante:{
-    nome:"Iniciante 4x na semana",
-    resumo:"AB repetido, tudo em 3x 10-15 com 1 min de intervalo",
+    nome:"Adaptação Iniciante",
+    freq:"4x por semana",
+    resumo:"Divisão AB, 3x 10-15 em todos os exercícios",
     semana:{1:"A",2:"B",4:"A",5:"B"},
     treinos:{
       A:{dia:"SEG/QUI",ex:[
@@ -417,9 +254,10 @@ const PLANOS = {
     }
   },
 
-  david:{
-    nome:"Treino do David 4x na semana",
-    resumo:"Dias 1 a 4, pouco volume e carga alta",
+  forca:{
+    nome:"Força e Hipertrofia",
+    freq:"4x por semana",
+    resumo:"Baixo volume e cargas altas, alternando superiores e inferiores",
     semana:{1:"1",2:"2",4:"3",5:"4"},
     treinos:{
       "1":{dia:"SEG",ex:[
@@ -459,6 +297,7 @@ const PLANOS = {
 const elVoltar=document.getElementById("voltar");
 const elTitulo=document.getElementById("titulo");
 const elTag=document.getElementById("tag");
+const elTema=document.getElementById("tema");
 const elRail=document.getElementById("rail");
 const elNote=document.getElementById("note");
 const elConteudo=document.getElementById("conteudo");
@@ -466,33 +305,58 @@ const elRodape=document.getElementById("rodape");
 
 let planoAtual=null;
 
-function icone(tipo){
-  if(tipo==="t") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>';
-  if(tipo==="ig") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>';
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>';
+/* ---------- tema claro / escuro ---------- */
+const TEMA="treinos-tema";
+function lerTema(){try{return localStorage.getItem(TEMA)}catch(e){return null}}
+function salvarTema(t){try{localStorage.setItem(TEMA,t)}catch(e){}}
+function aplicarTema(t){
+  document.documentElement.setAttribute("data-bs-theme",t);
+  elTema.innerHTML=t==="dark"?'<i class="bi bi-sun-fill"></i>':'<i class="bi bi-moon-stars-fill"></i>';
+  elTema.setAttribute("aria-label",t==="dark"?"Usar tema claro":"Usar tema escuro");
+  const m=document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute("content",t==="dark"?"#212529":"#ffffff");
 }
+const midia=window.matchMedia("(prefers-color-scheme: light)");
+aplicarTema(lerTema()||(midia.matches?"light":"dark"));
+midia.addEventListener("change",e=>{if(!lerTema()) aplicarTema(e.matches?"light":"dark")});
+elTema.addEventListener("click",()=>{
+  const t=document.documentElement.getAttribute("data-bs-theme")==="dark"?"light":"dark";
+  salvarTema(t); aplicarTema(t);
+});
 
+/* ---------- home ---------- */
 function home(){
   planoAtual=null;
   elVoltar.hidden=true; elRail.hidden=true; elNote.hidden=true;
-  elTitulo.textContent="Treinos"; elTag.textContent=""; delete elTag.dataset.on;
+  elTitulo.textContent="Treinos";
+  elTag.textContent=""; elTag.className="badge rounded-pill d-none flex-shrink-0";
   elRodape.textContent="Escolha a planilha que você vai usar.";
-  elConteudo.innerHTML='<p class="intro">Quatro planilhas disponíveis.</p>';
+  elConteudo.innerHTML='<p class="text-uppercase text-body-secondary fw-semibold tracking mt-4 mb-3" style="font-size:.72rem">Planilhas disponíveis</p>';
+
   Object.keys(PLANOS).forEach(k=>{
     const p=PLANOS[k];
     const letras=Object.keys(p.treinos);
-    const b=document.createElement("button");
-    b.className="plano"; b.type="button";
     const rotulo=/^\d+$/.test(letras[0])?"Dias":"Treinos";
-    b.innerHTML=`<div class="plano-txt"><h2>${p.nome}</h2><p>${p.resumo}</p>`+
-      `<span class="chip">${rotulo} ${letras.join(", ")}</span></div>`+
-      `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>`;
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="plano card border-0 shadow-sm w-100 mb-3";
+    b.innerHTML=
+      '<div class="card-body d-flex align-items-center gap-3">'+
+        '<div class="flex-grow-1 min-w-0">'+
+          '<h2 class="h5 fw-semibold mb-1">'+p.nome+'</h2>'+
+          '<p class="text-body-secondary small mb-2">'+p.resumo+'</p>'+
+          '<span class="badge text-bg-primary me-1">'+p.freq+'</span>'+
+          '<span class="badge bg-body-secondary text-body-secondary">'+rotulo+' '+letras.join(", ")+'</span>'+
+        '</div>'+
+        '<i class="bi bi-chevron-right text-body-secondary fs-5"></i>'+
+      '</div>';
     b.addEventListener("click",()=>abrirPlano(k));
     elConteudo.appendChild(b);
   });
   window.scrollTo({top:0});
 }
 
+/* ---------- abre uma planilha ---------- */
 function abrirPlano(k){
   planoAtual=k;
   const p=PLANOS[k];
@@ -503,62 +367,97 @@ function abrirPlano(k){
 
   Object.keys(p.treinos).forEach(t=>{
     const b=document.createElement("button");
-    b.className="day"; b.type="button"; b.setAttribute("role","tab"); b.dataset.t=t;
-    b.innerHTML=`<b>${t}</b><small>${p.treinos[t].dia}</small>`;
+    b.type="button"; b.setAttribute("role","tab"); b.dataset.t=t;
+    b.className="dia btn btn-outline-secondary flex-shrink-0";
+    b.innerHTML='<span class="d-block fw-bold fs-5 lh-1">'+t+'</span>'+
+                '<span class="d-block text-uppercase tracking opacity-75" style="font-size:.62rem">'+p.treinos[t].dia+'</span>';
     b.addEventListener("click",()=>selecionar(t));
     elRail.appendChild(b);
   });
 
   const hoje=new Date().getDay();
   const doDia=p.semana[hoje];
-  elTag.textContent=doDia?"hoje":"descanso"; elTag.dataset.on=String(!!doDia);
+  elTag.textContent=doDia?"Hoje":"Descanso";
+  elTag.className="badge rounded-pill flex-shrink-0 "+(doDia?"text-bg-success":"bg-body-secondary text-body-secondary");
   elNote.hidden=!!doDia;
   if(!doDia) elNote.textContent="Nesta planilha, hoje é descanso. Escolha um treino acima se quiser adiantar.";
 
   selecionar(doDia||Object.keys(p.treinos)[0]);
 }
 
+/* ---------- monta um treino ---------- */
 function selecionar(t){
   const p=PLANOS[planoAtual];
-  [...elRail.children].forEach(b=>b.setAttribute("aria-selected",String(b.dataset.t===t)));
+  [...elRail.children].forEach(b=>{
+    const on=b.dataset.t===t;
+    b.setAttribute("aria-selected",String(on));
+    b.className="dia btn flex-shrink-0 "+(on?"btn-primary":"btn-outline-secondary");
+  });
   elConteudo.innerHTML="";
 
   p.treinos[t].ex.forEach((e,idx)=>{
     const busca=e.n.replace(/ ou .*$/,"").replace(/ \+ .*$/,"");
-    const el=document.createElement("article");
-    el.className="ex";
+    const id="subs-"+idx;
+    const el=document.createElement("div");
+    el.className="card border-0 shadow-sm mb-3";
     el.innerHTML=`
-      <div class="ex-head">
-        <span class="idx">${idx+1}</span>
-        <div>
-          <h3>${e.n}</h3>
-          ${e.t!=="—"?`<p class="tech">${e.t}</p>`:""}
-          ${e.i!=="—"?`<p class="rest">${icone("t")}Intervalo ${e.i}</p>`:""}
+      <div class="card-body">
+        <div class="d-flex gap-3">
+          <span class="idx badge text-bg-primary rounded-3 fs-6">${idx+1}</span>
+          <div class="min-w-0">
+            <h3 class="h6 fw-semibold mb-1">${e.n}</h3>
+            ${e.t!=="—"?`<p class="text-body-secondary small mb-2">${e.t}</p>`:""}
+            ${e.i!=="—"?`<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis"><i class="bi bi-stopwatch me-1"></i>Intervalo ${e.i}</span>`:""}
+          </div>
         </div>
-      </div>
-      <div class="sets">${e.s.map(s=>`<button class="set" type="button" aria-pressed="false">${s}</button>`).join("")}</div>
-      <div class="actions">
-        <button class="btn swap" type="button" aria-expanded="false">Máquina ocupada</button>
-        <a class="btn" href="${IG+encodeURIComponent(busca+" execução")}" target="_blank" rel="noopener">${icone("ig")}Instagram</a>
-        <a class="btn" href="${YT+encodeURIComponent(busca+" execução correta")}" target="_blank" rel="noopener">${icone("yt")}YouTube</a>
-      </div>
-      <div class="subs" hidden>
-        <p>Substituições que mantêm o estímulo</p>
-        <ul>${e.alt.map(a=>`<li>${a}</li>`).join("")}</ul>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          ${e.s.map(s=>`<button class="set btn btn-outline-primary btn-sm flex-grow-1 fw-semibold" type="button" aria-pressed="false">${s}</button>`).join("")}
+        </div>
+
+        <div class="d-grid gap-2 mt-2">
+          <button class="swap acao btn btn-outline-danger btn-sm" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">
+            <i class="bi bi-arrow-repeat me-1"></i>Máquina ocupada
+          </button>
+          <div class="d-flex gap-2">
+            <a class="acao btn btn-outline-secondary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+               href="${IG+encodeURIComponent(busca+" execução")}" target="_blank" rel="noopener">
+              <i class="bi bi-instagram me-1"></i>Instagram
+            </a>
+            <a class="acao btn btn-outline-secondary btn-sm flex-fill d-inline-flex align-items-center justify-content-center"
+               href="${YT+encodeURIComponent(busca+" execução correta")}" target="_blank" rel="noopener">
+              <i class="bi bi-youtube me-1"></i>YouTube
+            </a>
+          </div>
+        </div>
+
+        <div class="collapse" id="${id}">
+          <div class="mt-3 p-3 rounded-3 bg-body-tertiary border-start border-3 border-danger-subtle">
+            <p class="text-uppercase text-body-secondary fw-semibold tracking mb-2" style="font-size:.68rem">Substituições que mantêm o estímulo</p>
+            <ul class="list-unstyled mb-0 small">
+              ${e.alt.map(a=>`<li class="d-flex gap-2 mb-2"><i class="bi bi-check2 text-danger-emphasis"></i><span>${a}</span></li>`).join("")}
+            </ul>
+          </div>
+        </div>
       </div>`;
 
     el.querySelectorAll(".set").forEach(btn=>{
       btn.addEventListener("click",()=>{
-        btn.setAttribute("aria-pressed",btn.getAttribute("aria-pressed")==="true"?"false":"true");
+        const on=btn.getAttribute("aria-pressed")!=="true";
+        btn.setAttribute("aria-pressed",String(on));
+        btn.classList.toggle("active",on);
       });
     });
 
-    const swap=el.querySelector(".swap"), subs=el.querySelector(".subs");
-    swap.addEventListener("click",()=>{
-      const aberto=swap.getAttribute("aria-expanded")==="true";
-      swap.setAttribute("aria-expanded",String(!aberto));
-      subs.hidden=aberto;
-      swap.textContent=aberto?"Máquina ocupada":"Fechar substituições";
+    const swap=el.querySelector(".swap"), col=el.querySelector(".collapse");
+    col.addEventListener("show.bs.collapse",()=>{
+      swap.classList.replace("btn-outline-danger","btn-danger");
+      swap.innerHTML='<i class="bi bi-x-lg me-1"></i>Fechar substituições';
+    });
+    col.addEventListener("hide.bs.collapse",()=>{
+      swap.classList.replace("btn-danger","btn-outline-danger");
+      swap.innerHTML='<i class="bi bi-arrow-repeat me-1"></i>Máquina ocupada';
     });
 
     elConteudo.appendChild(el);
