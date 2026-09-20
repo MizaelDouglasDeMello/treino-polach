@@ -68,9 +68,27 @@ sufixo `Seguro`/`Segura` (`flexorSeguro`, `remadaApoiadaSegura`,
 
 - **Marcar série feita** — toque na série e ela fica preenchida. As marcações
   são só da sessão: somem ao trocar de treino ou recarregar.
+- **Cronômetro de intervalo** — toque na ficha do intervalo e a contagem
+  aparece numa barra no rodapé, que fica visível enquanto você rola a tela.
+  Tem `+30s` e botão de parar. Ao zerar, mostra "Pode ir", apita e some
+  sozinha depois de 10 s.
 - **Máquina ocupada** — abre substituições que mantêm o mesmo estímulo do
   exercício, para quando o aparelho estiver em uso.
 - **Instagram / YouTube** — busca a execução daquele exercício.
+
+### Sobre o cronômetro
+
+Em intervalo com faixa (`2 a 3 min`) ele conta o **menor** valor — o aviso
+marca quando você já pode voltar, não quando tem que voltar. Exercício com
+dois intervalos (`30 s / 90 s`) ganha uma ficha para cada.
+
+A contagem usa o relógio do sistema em vez de ir descontando, então continua
+certa se o iPhone congelar o timer com a tela apagada.
+
+> **O apito não toca com o iPhone no silencioso.** O Safari respeita a chave
+> lateral de mudo, e não há como contornar isso pela página. A vibração
+> também não funciona: o iOS não suporta a API. Na prática, conte com a barra
+> na tela — e, se treinar no mudo, deixe o app visível.
 
 ---
 

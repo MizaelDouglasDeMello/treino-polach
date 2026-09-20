@@ -46,6 +46,12 @@
   .tracking{letter-spacing:.08em}
   .bi{width:1em;height:1em;vertical-align:-.125em;flex:0 0 auto}
 
+  /* cronometro de intervalo */
+  .crono{min-height:36px}
+  #cronometro{padding-bottom:env(safe-area-inset-bottom)}
+  body.com-crono{padding-bottom:6rem}
+  #cronoTempo{font-variant-numeric:tabular-nums;min-width:4.2ch;text-align:right}
+
   @media (prefers-reduced-motion:reduce){
     *{animation-duration:.01ms !important;transition-duration:.01ms !important}
   }
@@ -71,6 +77,21 @@
 <footer class="container-narrow px-3 pt-4 text-center small text-body-secondary" id="rodape">
   Escolha a planilha que voc&ecirc; vai usar.
 </footer>
+
+<div class="fixed-bottom bg-body border-top shadow-lg" id="cronometro" hidden>
+  <div class="progress rounded-0" style="height:3px">
+    <div class="progress-bar" id="cronoBarra" style="width:100%"></div>
+  </div>
+  <div class="container-narrow d-flex align-items-center gap-3 px-3 py-2">
+    <div class="flex-grow-1 min-w-0">
+      <div class="text-uppercase text-body-secondary fw-semibold tracking" style="font-size:.62rem">Descanso</div>
+      <div class="small text-truncate" id="cronoNome"></div>
+    </div>
+    <div class="fs-3 fw-bold" id="cronoTempo">00:00</div>
+    <button class="btn btn-sm btn-outline-secondary flex-shrink-0" id="cronoMais" type="button">+30s</button>
+    <button class="btn btn-sm btn-outline-danger flex-shrink-0" id="cronoParar" type="button" aria-label="Parar cronômetro"></button>
+  </div>
+</div>
 
 <script src="vendor/bootstrap.bundle.min.js"></script>
 <script>
@@ -512,6 +533,109 @@ const elRodape=document.getElementById("rodape");
 
 let planoAtual=null;
 
+/* ---------- cronometro de intervalo ---------- */
+const elCrono=document.getElementById("cronometro");
+const elCronoNome=document.getElementById("cronoNome");
+const elCronoTempo=document.getElementById("cronoTempo");
+const elCronoBarra=document.getElementById("cronoBarra");
+const elCronoMais=document.getElementById("cronoMais");
+const elCronoParar=document.getElementById("cronoParar");
+
+/* "45 s", "2 min", "1 a 2 min" (usa o menor), "30 s / 90 s" (dois botoes) */
+function duracoes(txt){
+  return String(txt).split("/").map(p=>p.trim()).filter(Boolean).map(p=>{
+    const nums=p.match(/\d+/g);
+    if(!nums) return null;
+    const n=parseInt(nums[0],10);
+    return {seg:/min/i.test(p)?n*60:n, rotulo:p};
+  }).filter(Boolean);
+}
+
+function cronoBotoes(e){
+  if(e.i==="—") return "";
+  const ds=duracoes(e.i);
+  if(!ds.length) return `<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">${ic("stopwatch","me-1")}Intervalo ${e.i}</span>`;
+  const nome=e.n.replace(/"/g,"&quot;");
+  return `<div class="d-flex flex-wrap gap-2">`+ds.map(d=>
+    `<button type="button" class="crono btn btn-sm rounded-pill bg-primary-subtle text-primary-emphasis border-0 fw-semibold"
+             data-seg="${d.seg}" data-nome="${nome}">${ic("stopwatch","me-1")}${ds.length>1?d.rotulo:"Intervalo "+d.rotulo}</button>`
+  ).join("")+`</div>`;
+}
+
+let audio=null;
+function bip(){
+  try{
+    audio=audio||new (window.AudioContext||window.webkitAudioContext)();
+    if(audio.state==="suspended") audio.resume();
+    [0,.25,.5].forEach(t=>{
+      const o=audio.createOscillator(), g=audio.createGain();
+      o.type="sine"; o.frequency.value=880;
+      o.connect(g); g.connect(audio.destination);
+      const t0=audio.currentTime+t;
+      g.gain.setValueAtTime(.0001,t0);
+      g.gain.exponentialRampToValueAtTime(.3,t0+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+.18);
+      o.start(t0); o.stop(t0+.2);
+    });
+  }catch(err){}
+}
+
+let cronoFim=0, cronoTotal=0, cronoTick=null, cronoSumir=null;
+
+function mmss(s){
+  s=Math.max(0,s);
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+}
+
+function passoCrono(){
+  // usa relogio real: o iOS congela timers com a tela apagada
+  const resta=Math.ceil((cronoFim-Date.now())/1000);
+  elCronoBarra.style.width=Math.max(0,Math.min(100,resta/cronoTotal*100))+"%";
+  if(resta>0){ elCronoTempo.textContent=mmss(resta); return; }
+
+  clearInterval(cronoTick); cronoTick=null;
+  elCronoTempo.textContent="Pode ir";
+  elCronoTempo.classList.add("text-success");
+  elCronoBarra.classList.add("bg-success");
+  elCronoBarra.style.width="100%";
+  bip();
+  if(navigator.vibrate){ try{ navigator.vibrate([200,100,200]); }catch(err){} }
+  cronoSumir=setTimeout(()=>{ if(!cronoTick) pararCrono(); },10000);
+}
+
+function iniciarCrono(seg,nome){
+  // o toque que inicia e o gesto que libera o audio no iOS
+  try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume(); }catch(err){}
+  clearTimeout(cronoSumir); if(cronoTick) clearInterval(cronoTick);
+  cronoTotal=seg; cronoFim=Date.now()+seg*1000;
+  elCronoNome.textContent=nome;
+  elCronoTempo.classList.remove("text-success");
+  elCronoBarra.classList.remove("bg-success");
+  elCrono.hidden=false; document.body.classList.add("com-crono");
+  cronoTick=setInterval(passoCrono,200);
+  passoCrono();
+}
+
+function pararCrono(){
+  clearTimeout(cronoSumir);
+  if(cronoTick) clearInterval(cronoTick);
+  cronoTick=null;
+  elCrono.hidden=true;
+  document.body.classList.remove("com-crono");
+}
+
+elCronoParar.innerHTML=ic("x-lg");
+elCronoParar.addEventListener("click",pararCrono);
+elCronoMais.addEventListener("click",()=>{
+  clearTimeout(cronoSumir);
+  cronoFim=Math.max(cronoFim,Date.now())+30000;
+  cronoTotal+=30;
+  elCronoTempo.classList.remove("text-success");
+  elCronoBarra.classList.remove("bg-success");
+  if(!cronoTick) cronoTick=setInterval(passoCrono,200);
+  passoCrono();
+});
+
 /* ---------- tema claro / escuro ---------- */
 const TEMA="treinos-tema";
 function lerTema(){try{return localStorage.getItem(TEMA)}catch(e){return null}}
@@ -616,7 +740,7 @@ function selecionar(t){
           <div class="min-w-0">
             <h3 class="h6 fw-semibold mb-1">${e.n}</h3>
             ${e.t!=="—"?`<p class="text-body-secondary small mb-2">${e.t}</p>`:""}
-            ${e.i!=="—"?`<span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">${ic("stopwatch","me-1")}Intervalo ${e.i}</span>`:""}
+            ${cronoBotoes(e)}
           </div>
         </div>
 
@@ -650,6 +774,10 @@ function selecionar(t){
           </div>
         </div>`:""}
       </div>`;
+
+    el.querySelectorAll(".crono").forEach(btn=>{
+      btn.addEventListener("click",()=>iniciarCrono(+btn.dataset.seg,btn.dataset.nome));
+    });
 
     el.querySelectorAll(".set").forEach(btn=>{
       btn.addEventListener("click",()=>{
