@@ -4,8 +4,14 @@ Aplicativo de bolso para acompanhar as planilhas de treino na academia.
 
 **Abrir:** https://mizaeldouglasdemello.github.io/treino-polach/
 
-Uma página só, sem back-end e sem build. Ao abrir, ele já mostra o treino
-do dia; se hoje for descanso, avisa e deixa você escolher outro.
+Um arquivo só, sem back-end e sem build. Ao escolher uma planilha ele já abre
+o treino do dia; se hoje for descanso, avisa e deixa você escolher outro.
+
+```
+Planilhas  ──▶  Treino A–E  ──▶  Exercício
+           ◀──             ◀──
+              Voltar          Voltar
+```
 
 ---
 
@@ -74,20 +80,35 @@ com a mesma necessidade só precisa da marca.
 > exercício contraindicado dentro do painel de substituições. As checagens
 > existem justamente para esse erro não passar calado.
 
-## O que dá para fazer
+## As três telas
 
-São três telas: a lista de planilhas, a lista de exercícios do treino e a
-página de um exercício.
+O botão **Voltar**, no topo, sempre desce um nível: do exercício para o treino,
+do treino para as planilhas. Voltando de um exercício, a lista reaparece na
+mesma altura em que estava — você não perde o lugar no meio do treino.
 
-**Na lista do treino**, cada exercício mostra nome, séries, intervalo e quanto
-já foi feito — o treino inteiro cabe numa tela. Toque para abrir.
+### 1. Planilhas
 
-**Na página do exercício** fica tudo que você usa enquanto treina:
+A tela inicial. Cada planilha mostra nome, resumo, frequência e quais treinos
+tem. No fim ficam os botões de [backup](#backup).
+
+### 2. Treino
+
+As abas no topo são os dias (A–E, ou 1–4). O app já abre no treino de hoje, ou
+avisa que hoje é descanso.
+
+Cada exercício aparece em uma linha com nome, séries, intervalo e quanto já foi
+feito — o treino inteiro cabe numa tela, sem rolagem. Toque para abrir.
+
+No rodapé, **Limpar este treino** zera as marcações e cargas só do treino
+aberto.
+
+### 3. Exercício
+
+É onde fica tudo que você usa enquanto treina:
 
 - **Marcar série feita** — toque na série e ela fica preenchida. Fica salvo
   até o fim do dia, então trocar de treino, fechar o app ou recarregar não
-  perde nada. "Limpar este treino", no rodapé da lista, zera só o treino
-  aberto.
+  perde nada.
 - **Anotar a carga** — campo ao lado de cada série.
 - **Progressão de carga** — o histórico daquele movimento, com barra por
   sessão e um aviso comparando com a vez anterior: *subiu 5 kg*, *manteve a
@@ -106,7 +127,7 @@ já foi feito — o treino inteiro cabe numa tela. Toque para abrir.
 No topo, o **botão de som** desliga o apito do cronômetro e o **de tema**
 alterna claro e escuro. As duas escolhas ficam guardadas.
 
-### Sobre o cronômetro
+## Sobre o cronômetro
 
 Em intervalo com faixa (`2 a 3 min`) ele conta o **menor** valor — o aviso
 marca quando você já pode voltar, não quando tem que voltar. Exercício com
@@ -124,7 +145,7 @@ toa. Onde o navegador não concede a trava, o resto continua funcionando igual.
 > também não funciona: o iOS não suporta a API. Na prática, conte com a barra
 > na tela — e, se treinar no mudo, deixe o app visível.
 
-### Onde o progresso fica guardado
+## Onde o progresso fica guardado
 
 Duas chaves no `localStorage`, só no aparelho — nada vai para servidor nenhum.
 
@@ -141,7 +162,7 @@ pela planilha: a carga do supino é a mesma esteja ele em que planilha estiver.
 > no mesmo aparelho e navegador, as cargas se misturam. Em celulares separados
 > não há problema.
 
-### Backup
+## Backup
 
 No fim da tela inicial, **Exportar** salva um `.json` com o histórico e o dia
 em andamento — no iPhone ele vai para o app Arquivos ou para onde você mandar
@@ -156,7 +177,7 @@ Vale exportar de vez em quando: o histórico existe só no aparelho, e o Safari
 pode limpar dados de sites que ficam dias sem abrir. Instalar na tela de início
 reduz esse risco, mas não elimina.
 
-### Os links de busca
+## Os links de busca
 
 O YouTube aceita busca por palavra na URL, então o link leva direto ao termo.
 
@@ -273,8 +294,31 @@ O cardio entra como um exercício comum, com a duração no lugar das séries:
  i:"—", s:["20 a 25 min"], alt:S.caminhada}
 ```
 
-Para uma planilha nova, basta acrescentar uma chave em `PLANOS` — a home e a
-navegação se montam sozinhas a partir dela.
+Para uma planilha nova, basta acrescentar uma chave em `PLANOS` — as três telas
+se montam sozinhas a partir dela.
+
+### Como as telas são montadas
+
+Uma função por tela, cada uma reescrevendo `#conteudo`. Não há rotas nem
+histórico do navegador: o estado vive em três variáveis.
+
+| Função | Monta | Deixa `nivel` em |
+|---|---|---|
+| `home()` | lista de planilhas + backup | `"home"` |
+| `abrirPlano(chave)` | abas dos dias, e chama `selecionar()` | `"treino"` |
+| `selecionar(treino)` | lista de exercícios do treino | `"treino"` |
+| `abrirExercicio(indice)` | a página do exercício | `"exercicio"` |
+
+- `nivel` diz em qual tela estamos, e é o que faz o botão Voltar escolher entre
+  `selecionar(treinoAtual)` e `home()`.
+- `planoAtual`, `treinoAtual` e `exAtual` dizem o quê está aberto. Os dois
+  primeiros formam a chave do progresso (`plano|treino|exercício`).
+- `voltandoPara` guarda a rolagem ao sair de um exercício, e `selecionar()` a
+  consome para reposicionar a lista.
+
+> O botão Voltar da tela do exercício é o **único** caminho de volta para a
+> lista. Como não há histórico de navegador, o gesto de voltar do iOS sai do
+> app em vez de subir um nível.
 
 ---
 
